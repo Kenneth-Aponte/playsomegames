@@ -1,0 +1,72 @@
+html, body {
+    background: rgb(23, 32, 34); 
+    background: linear-gradient(0deg, rgb(10, 45, 53) 10%,  rgb(34, 44, 46) 50%, rgb(10, 45, 53) 90%);
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+}
+
+img {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+canvas {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;         
+    image-rendering: -webkit-optimize-contrast; 
+    image-rendering: -o-crisp-edges;            
+    image-rendering: crisp-edges;               
+    -ms-interpolation-mode: nearest-neighbor;   
+}
+
+#navbar {
+    background-color: #101718;
+    position: relative;
+    width: 100%;
+    height: 7%;
+    box-shadow: 0 2px 4px 0 #00000033;
+}
+
+#navbar_item_container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#logo {
+    color: crimson;
+    font-family: 'Common Pixel', sans-serif;
+    margin-left: 2%;
+    margin-right: 20%;
+    font-size: 5vh;
+    text-decoration: none;
+    user-select: none;
+}
+
+.navbar_item {
+    position: fixed;
+    color: white;
+    right: 0vh;
+    margin-right: 2%;
+    font-family: 'aldrich', sans-serif;
+    font-size: 3vh;
+    text-decoration: none;
+    user-select: none;
+}
+
+.navbar_item:hover{
+    color: rgb(190, 189, 189);
+}
+
+
+/*--About us page--*/
+.wip {
+    color: white;
+    margin-left: 2vw;
+    font-family: 'Common Pixel', sans-serif;
+    font-size: 20vh;
+}
