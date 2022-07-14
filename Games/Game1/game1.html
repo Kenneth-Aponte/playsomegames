@@ -16,17 +16,11 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;    
+            background-color: black;
             background-image: url('../../Images/background3.jpeg');
             background-size: 50vh;
             background-repeat: repeat;
         }
-        canvas {
-            border-color: #feb20d; /* feb20d */
-            border-style: solid;
-            border-width: .5vh;
-            border-radius: 5vh;
-        }
-
 
     </style>
 </head>
@@ -37,6 +31,10 @@ var config = {
     type: Phaser.AUTO,
     width: 1280,
     height: 720,
+    scale : {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,//for when i implement fs
+    },
     physics: {
         default: 'arcade',
         arcade: {
@@ -64,7 +62,7 @@ var game = new Phaser.Game(config);
 var player;
 var thrust;
 var playerBullets;
-var fireTime = 0, MAXFIRERATE = 10;
+var fireTime = MAXFIRERATE = 8;
 //stars
 var stars;
 var starColors = ['ebc634','34d3eb','eb34d9','34eb46', 'ffffff', 'ffffff', 'ffffff']
@@ -262,8 +260,9 @@ function update(){
     }
     else if(keySpace.isDown){
         fireTime = MAXFIRERATE;
-        playerBullets.create(player.x, player.y, 'pBullet').setVelocityY(-2000).setScale(3);
-    }
+        playerBullets.create(player.x + 18, player.y, 'pBullet').setVelocityY(-1500).setScale(3);
+        playerBullets.create(player.x + 61, player.y, 'pBullet').setVelocityY(-1500).setScale(3);
+    } 
 
     playerBullets.children.each((pB) => {
         //out of screeen
