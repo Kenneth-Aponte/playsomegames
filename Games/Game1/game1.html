@@ -68,25 +68,33 @@ var fireTime = 0, MAXFIRERATE = 10;
 //stars
 var stars;
 var starColors = ['ebc634','34d3eb','eb34d9','34eb46', 'ffffff', 'ffffff', 'ffffff']
+//side rocks
+var sideRocks;
 //enemies
 var enemies1;
 //input keys
 var keyW, keyA, keyS, keyD, keySpace;
 
+//text
+var FPS = 0;
+
 
 function preload(){
     //images
     this.load.image('star','assets/star.png');
+    this.load.image('sideRock','assets/clouds.png');
     this.load.image('pBullet','assets/pBullet.png');
     
     //spritesheets
-    this.load.spritesheet('ship','assets/ship.png', {frameWidth: 16, frameHeight: 14});
-    this.load.spritesheet('thrust','assets/thrust.png', {frameWidth: 10,frameHeight: 7, spacing: 1});
+    this.load.spritesheet('shipNT','assets/shipST.png', {frameWidth: 16, frameHeight: 14});
+    this.load.spritesheet('shipST','assets/shipST.png', {frameWidth: 16, frameHeight: 21});
+    this.load.spritesheet('shipBT','assets/shipBT.png', {frameWidth: 16, frameHeight: 22});
     this.load.spritesheet('enemies1','assets/enemy1.png', {frameWidth: 16, frameHeight: 13});
 }
 
 
 function create(){
+    this.physics.world.setBounds(140,0,1000,720);
 
     //space (aka moving stars)
     stars = this.physics.add.group({
@@ -95,52 +103,73 @@ function create(){
     });
     
     stars.children.iterate((star) => {
-        let size = Phaser.Math.Between(1,3);
+        let size = Phaser.Math.Between(1,2);
         star.setScale(size, size);
-        star.setX(Phaser.Math.Between(0,1280));
+        star.setX(Phaser.Math.Between(140,1000));//aslso changed in the update method
         star.setY(Phaser.Math.Between(0,720));
         star.setTint(parseInt('0x' + starColors[Phaser.Math.Between(0,6)]));
         star.setVelocityY(Phaser.Math.Between(100,500));//also changed in the update method
     });
 
-
-    //thrust  --> must be drawn before the ship (under)
-    thrust = this.physics.add.sprite(640,500,'thrust').setScale(5);
-
-    this.anims.create({
-        key: 'big',
-        frames: [{key: 'thrust', frame: 0}]
-    });
-    this.anims.create({
-        key: 'small',
-        frames: [{key: 'thrust', frame: 2}]
-    });
-    this.anims.create({
-        key: 'none',
-        frames: [{key: 'thrust', frame: 1}]
-    });
+    //side rocks
+    sideRocks = this.physics.add.group();
+    
+    sideRocks.create(0,512,'sideRock').setScale(4).setAngle(180);
+    sideRocks.create(0,-512,'sideRock').setScale(4).setAngle(180);
+    sideRocks.create(1280,512,'sideRock').setScale(4);
+    sideRocks.create(1280,-512,'sideRock').setScale(4);
+    
+    sideRocks.setTint('0x6d6145');
     
     
     //player
-    player = this.physics.add.sprite(640,500,'ship').setScale(5);
+    player = this.physics.add.sprite(640,500,'shipST').setScale(5).setOrigin(0,0);
     
+    //small thrust
     this.anims.create({
-        key: 'left',
-        frames: [{key: 'ship',frame: 0}],
+        key: 'leftST',
+        frames: [{key: 'shipST',frame: 0}],
     });
     this.anims.create({
-        key: 'center',
-        frames: [{key: 'ship',frame: 1}],
+        key: 'centerST',
+        frames: [{key: 'shipST',frame: 1}],
     });
     this.anims.create({
-        key: 'right',
-        frames: [{key: 'ship',frame: 2}],
+        key: 'rightST',
+        frames: [{key: 'shipST',frame: 2}],
     });
-    
 
+    //big thrust
+    this.anims.create({
+        key: 'leftBT',
+        frames: [{key: 'shipBT',frame: 0}],
+    });
+    this.anims.create({
+        key: 'centerBT',
+        frames: [{key: 'shipBT',frame: 1}],
+    });
+    this.anims.create({
+        key: 'rightBT',
+        frames: [{key: 'shipBT',frame: 2}],
+    });
+
+    //no thrust
+    this.anims.create({
+        key: 'leftNT',
+        frames: [{key: 'shipNT',frame: 0}],
+    });
+    this.anims.create({
+        key: 'centerNT',
+        frames: [{key: 'shipNT',frame: 1}],
+    });
+    this.anims.create({
+        key: 'rightNT',
+        frames: [{key: 'shipNT',frame: 2}],
+    });
+    
 
     //player bullets
-    playerBullets = this.physics.add.group();
+    playerBullets = this.physics.add.group();//created in runtime
 
     //enemies1 
     //creating 3 enemies as a test, hence this will change
@@ -173,48 +202,57 @@ function create(){
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+    //text
+    FPS = this.add.text(1220, 16, '0', { fontSize: '32px', fill: '#ffffff' });
 }
 
 
 function update(){
-    //input handling
     //movement vertical
     if(keyW.isDown){
-        thrust.anims.play('small');
+        player.anims.play('centerBT');
         player.setVelocityY(player.body.velocity.y - 20);
-        thrust.y = player.y + (player.height - thrust.height/2-4)*5;
     }
     else if(keyS.isDown){
-        thrust.anims.play('none');
+        player.anims.play('centerNT');
         player.setVelocityY(player.body.velocity.y + 20);
-        thrust.y = player.y + (player.height - thrust.height/2-4)*5;
     }
     else{
-        thrust.anims.play('small');
         //get to 0 in a smooth way from either direction (up or down)
+        player.anims.play('centerST');
         if(player.body.velocity.y < 0){
             player.setVelocityY(player.body.velocity.y + 20);
         }
         else if(player.body.velocity.y > 0){
             player.setVelocityY(player.body.velocity.y - 20);
         }
-        thrust.y = player.y + (player.height - thrust.height/2-4)*5;
     }
 
     //movement horizontal
     if(keyA.isDown){
-        player.anims.play('left');
+        if(keyW.isDown){
+            player.anims.play('leftBT');
+        }
+        else if(keyS.isDown){
+            player.anims.play('leftNT');
+        }else{
+            player.anims.play('leftST');
+        }
         player.setVelocityX(-500);
-        thrust.x = player.x-10;
     }
     else if(keyD.isDown){
-        player.anims.play('right');
+        if(keyW.isDown){
+            player.anims.play('rightBT');
+        }
+        else if(keyS.isDown){
+            player.anims.play('rightNT');
+        }else{
+            player.anims.play('rightST');
+        }
         player.setVelocityX(500);
-        thrust.x = player.x+10;
     }
     else{
-        thrust.x = player.x;
-        player.anims.play('center');
         player.setVelocityX(0);
     }
 
@@ -234,14 +272,6 @@ function update(){
         }
     });
 
-    //change star X and reset Y to make a moving space
-    stars.children.iterate((star) => {
-        if(star.y > 720 ){
-            star.y = -1;
-            star.x = Phaser.Math.Between(0,1280);
-            star.setVelocityY(Phaser.Math.Between(100,500));
-        }
-    });
 
     //enemy movement -->mostly temp
     enemies1.children.iterate((e1) =>{
@@ -254,7 +284,26 @@ function update(){
         }
     });
 
+    //moving sensation
+    //change star X and reset Y to make a moving space
+    stars.children.iterate((star) => {
+        if(star.y > 720 ){
+            star.y = -1;
+            star.x = Phaser.Math.Between(140,1000);
+            star.setVelocityY(Phaser.Math.Between(100,500));
+        }
+    });
 
+    //moving sides --> resets their y pos back to -512 to maintain a flawless loop 
+    sideRocks.children.iterate((sideRock) => {
+        sideRock.y += 16;
+        if(sideRock.y >= 1232){
+            sideRock.y = -512;//should be -816, though i am allowing some overlap just in case
+        }
+    });
+
+    //update current fps 
+    FPS.setText(Phaser.Math.RoundTo(this.game.loop.actualFps,0));
     //end game 
 
 }
