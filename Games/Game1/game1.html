@@ -6,14 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Survival</title>
     <link rel="shortcut icon" type="image/PNG" href="../../favicon.PNG">
-
-    <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.cdnfonts.com/css/serious">
-    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/serious" media="print" onload="this.media='all'">
-    <noscript>
-        <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/serious">
-    </noscript>
-    
     <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
     <style type="text/css">
         body,html {
@@ -89,7 +81,7 @@ var enemies3Spawned = 0, enemies3Left = 0, maxE3 = undefined, e3Killed = 0;
 //sounds
 var fire, burst;
 //other flags
-var gameStarted = false, nextRoundCalled = false, countDown = 3;
+var loaded = false, gameStarted = false, nextRoundCalled = false, countDown = 3;
 var flashInt, countDownInt;//intervals
 
 
@@ -107,6 +99,7 @@ function preload(){
 
     //audio
     this.load.audio('fire','assets/LaserFire1.wav');
+    loadFont();
 }
 
 
@@ -316,7 +309,7 @@ function update(){
             nextRoundCalled = true;
         }
 
-    }else{
+    }else if(loaded){
         if(middleScreenText.text == ''){
             middleScreenText.setText('PRESS ENTER TO START!');
             flashInt = setInterval(() => {
@@ -420,6 +413,17 @@ function enemy1Hit(pB, e1){
         enemies1Left--;
     }
     //play the death animation
+}
+
+
+//loading the font
+async function loadFont(){
+    const font = new FontFace('serious1', 'url(https://fonts.cdnfonts.com/s/7418/Serious-1.woff)');
+    await font.load();
+    
+    document.fonts.add(font);
+    document.body.classList.add('fonts-loaded');
+    loaded = true;
 }
 
 </script>
