@@ -168,7 +168,7 @@ function animate(){
 
 //gamneListCreation
 function populateGameList(){
-    gameList.push(new Game("Coming Soon", g_CS, -imageW/2, true));
+    gameList.push(new Game("Space Survival", g_CS, -imageW/2, true));
     gameList.push(new Game("Coming Soon", g_CS, (imageW/2 + dist), true));
     gameList.push(new Game("Coming Soon", g_CS, (imageW + imageW/2 + dist*2), true));
     gameList.push(new Game("Coming Soon", g_CS, (imageW*2 + imageW/2 + dist*3), true));
@@ -217,7 +217,7 @@ addEventListener('keyup', (event) =>{
     
     //starts the game
     if(name == "Enter"){
-        window.location.replace("/Games/" + gameList[gameSelected].name.replaceAll(" ",'').toLowerCase() +  ".html")
+        window.location.replace("/Games/" + gameList[gameSelected].name.replaceAll(" ",'') + '/' + gameList[gameSelected].name.replaceAll(" ",'').toLowerCase() +  ".html")
     }
 
     // console.log(gameList);
