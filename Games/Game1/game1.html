@@ -83,9 +83,9 @@ var enemies1Spawned = 0, enemies1Left = 0, maxE1 = 3, e1Killed = 0;
 var enemies2Spawned = 0, enemies2Left = 0, maxE2 = undefined, e2Killed = 0;
 var enemies3Spawned = 0, enemies3Left = 0, maxE3 = undefined, e3Killed = 0;
 //sounds
-var fire, burst;
+var introSong, fire, expSound1, expSound2, respawnSound, newRoundSound, gameOverSound;
 //other flags
-var loaded = false, gameStarted = false, nextRoundCalled = false, countDown = 3;
+var loaded = false, gameStarted = false, nextRoundCalled = false, countDown = 5;
 var flashInt, countDownInt;//intervals
 
 
@@ -104,6 +104,13 @@ function preload(){
 
     //audio
     this.load.audio('fire','assets/LaserFire1.wav');
+    this.load.audio('intro','assets/intro_cut.mp3');
+    this.load.audio('explosion1', 'assets/Explosion1.wav');
+    this.load.audio('explosion2', 'assets/Explosion2.wav');
+    this.load.audio('respawn', 'assets/VictorySmall.wav');
+    this.load.audio('newRound', 'assets/VictoryBig.wav');
+    this.load.audio('gameOver', 'assets/GameOver.wav');
+  
     loadFont();
 }
 
@@ -236,128 +243,115 @@ function create(){
 
     //audio
     fire = this.sound.add('fire');
+    introSong = this.sound.add('intro')
+    expSound1 = this.sound.add('explosion1');
+    expSound2 = this.sound.add('explosion2');
+    respawnSound = this.sound.add('respawn');
+    newRoundSound = this.sound.add('newRound');
+    gameOverSound = this.sound.add('gameOver');
 }
 
 
 function update(){
-    if(gameStarted){
-        if(!playerDead){
-            //movement vertical
-            if(keyW.isDown && !keyA.isDown && !keyD.isDown){
-                player.anims.play('centerBT', true);
-                player.setVelocityY(-500);
+    if(gameStarted && !playerDead){
+        //movement vertical
+        if(keyW.isDown && !keyA.isDown && !keyD.isDown){
+            player.anims.play('centerBT', true);
+            player.setVelocityY(-500);
+        }
+        else if(keyS.isDown && !keyA.isDown && !keyD.isDown){
+            player.anims.play('centerNT', true);
+            player.setVelocityY(500);
+        }
+        else{
+            player.anims.play('centerST', true);
+            player.setVelocityY(0);
+        }
+
+        //movement horizontal
+        if(keyA.isDown){
+            if(keyW.isDown){
+                player.anims.play('leftBT', true);
+                player.setVelocity(-353,-353);
             }
-            else if(keyS.isDown && !keyA.isDown && !keyD.isDown){
-                player.anims.play('centerNT', true);
-                player.setVelocityY(500);
+            else if(keyS.isDown){
+                player.anims.play('leftNT', true);
+                player.setVelocity(-353,353);
+            }else{
+                player.anims.play('leftST', true);
+                player.setVelocityX(-500);
             }
-            else{
-                player.anims.play('centerST', true);
-                player.setVelocityY(0);
+        }
+        else if(keyD.isDown){
+            if(keyW.isDown){
+                player.anims.play('rightBT', true);
+                player.setVelocity(353,-353);
             }
-    
-            //movement horizontal
-            if(keyA.isDown){
-                if(keyW.isDown){
-                    player.anims.play('leftBT', true);
-                    player.setVelocity(-353,-353);
+            else if(keyS.isDown){
+                player.anims.play('rightNT', true);
+                player.setVelocity(353,353);
+            }else{
+                player.anims.play('rightST', true);
+                player.setVelocityX(500);
+            }
+        }
+        else{
+            player.setVelocityX(0);
+        }
+
+        //shooting
+        if(fireTime > 0){
+            fireTime--;
+        }
+        else if(keySpace.isDown && !nextRoundCalled){
+            fire.play();
+            fireTime = MAXFIRERATE;
+            playerBullets.create(player.x+40, player.y, 'pBullet').setVelocityY(-1000).setScale(3);
+        } 
+        playerBullets.children.each((pB) => {
+            //out of screeen
+            if(pB.y < 0){
+                pB.destroy();
+                //remove points
+                if(score >= 5){
+                    score -=5;
+                    scoreText.setText('SCORE: ' + score.toString());
                 }
-                else if(keyS.isDown){
-                    player.anims.play('leftNT', true);
-                    player.setVelocity(-353,353);
-                }else{
-                    player.anims.play('leftST', true);
-                    player.setVelocityX(-500);
-                }
             }
-            else if(keyD.isDown){
-                if(keyW.isDown){
-                    player.anims.play('rightBT', true);
-                    player.setVelocity(353,-353);
-                }
-                else if(keyS.isDown){
-                    player.anims.play('rightNT', true);
-                    player.setVelocity(353,353);
-                }else{
-                    player.anims.play('rightST', true);
-                    player.setVelocityX(500);
-                }
+        });
+
+        //enemy movement -->mostly temp
+        enemies1.children.each((e1) =>{
+            if(e1.y >= 720){
+                e1.y = 0;
+                e1.x = (Phaser.Math.Between(0,1280));
+                const _vel = 600;
+                const _angle = Phaser.Math.FloatBetween(Math.PI/2 + Math.PI/4, Math.PI + Math.PI/4);
+                e1.rotation = _angle;
+                e1.setVelocityX(Math.sin(Math.PI - _angle)*_vel);
+                e1.setVelocityY(Math.cos(Math.PI - _angle)*_vel);
             }
-            else{
-                player.setVelocityX(0);
-            }
-    
-            //shooting
-            if(fireTime > 0){
-                fireTime--;
-            }
-            else if(keySpace.isDown && !nextRoundCalled){
-                fire.play();
-                fireTime = MAXFIRERATE;
-                playerBullets.create(player.x+40, player.y, 'pBullet').setVelocityY(-2000).setScale(3);
+        });
+
+        //explosions
+        explosions.children.each((exp) => {
+            if(exp.anims.currentFrame.index == 5){
+                exp.destroy();
             } 
-            playerBullets.children.each((pB) => {
-                //out of screeen
-                if(pB.y < 0){
-                    pB.destroy();
-                    //remove points
-                    if(score >= 5){
-                        score -=5;
-                        scoreText.setText('SCORE: ' + score.toString());
-                    }
-                }
-            });
-    
-            //enemy movement -->mostly temp
-            enemies1.children.each((e1) =>{
-                if(e1.y >= 720){
-                    e1.y = 0;
-                    e1.x = (Phaser.Math.Between(0,1280));
-                    const _vel = 600;
-                    const _angle = Phaser.Math.FloatBetween(Math.PI/2 + Math.PI/4, Math.PI + Math.PI/4);
-                    e1.rotation = _angle;
-                    e1.setVelocityX(Math.sin(Math.PI - _angle)*_vel);
-                    e1.setVelocityY(Math.cos(Math.PI - _angle)*_vel);
-                }
-            });
+        });
 
-            //explosions
-            explosions.children.each((exp) => {
-                if(exp.anims.currentFrame.index == 5){
-                    exp.destroy();
-                } 
-            });
-    
-            //new round check
-            if(!nextRoundCalled && (enemies1Spawned == 0 && enemies1Left == 0) /* and the other enemies later on*/){
-                countDown = 5;
-                middleScreenText.visible = true;
-                middleScreenText.setText('NEXT ROUND IN ' + countDown.toString())
-                newRound(e1Killed*2,e2Killed*2,e3Killed*2);
-                nextRoundCalled = true;
-            }
-
-        }else if(playerLives >= 0){//dead transition
-            player.anims.play('explode', true);
-            if(player.anims.currentFrame.index == 5){
-                //restore everything
-                //TODO: probably set a timeout for this to happen with a message in the middle of the screen
-                playerDead = false;
-                enemies1.children.iterate((e1) => {
-                    e1.setVelocityY(400);
-                });
-                player.x = 600;
-                player.y = 500;
-            }
-        
-        }else {//Game Over
-            player.anims.play('explode', true);
-            middleScreenText.setText('GAME OVER');//TODO: change color to red
-            //display score and round et al
+        //new round check
+        if(!nextRoundCalled && (enemies1Spawned == 0 && enemies1Left == 0) /* and the other enemies later on*/){
+            countDown = 3;
             middleScreenText.visible = true;
-            if(player.anims.currentFrame.index == 5){
-                player.visible = false;
-            }
+            middleScreenText.setText('NEXT ROUND IN ' + countDown.toString())
+            newRound(e1Killed*2,e2Killed*2,e3Killed*2);
+            nextRoundCalled = true;
+        }
+
+        //turn volume down on intro song since game started
+        if(introSong.volume > 0){
+            introSong.volume -= 0.01;
         }
 
     }else if(loaded){
@@ -369,6 +363,7 @@ function update(){
         }
         if(keyEnter.isDown && !nextRoundCalled){
             //initial function calls
+            introSong.play();
             gameStart_Spawn();
             clearInterval(flashInt);
             middleScreenText.visible = true;//the flash could ended with it invisible
@@ -379,7 +374,6 @@ function update(){
         }
     }
     
-
     //moving sensation
     //change star X and reset Y to make a moving space
     stars.children.iterate((star) => {
@@ -421,11 +415,12 @@ function gameStart_Spawn(){
         nextRoundCalled = false;
         middleScreenText.visible = false;
         clearInterval(countDownInt);
-    },3000);
+    },5000);
 }
 
 
 function newRound(e1Count, e2Count, e3Count){
+    newRoundSound.play();
     countDownInt = setInterval(() => {
         countDown--;
         middleScreenText.setText('NEXT ROUND IN ' + countDown.toString());
@@ -444,7 +439,7 @@ function newRound(e1Count, e2Count, e3Count){
         middleScreenText.visible = false;
         clearInterval(countDownInt);
         roundText.setText('ROUND: ' + round.toString());
-    }, 5000);
+    }, 3000);
 }
 
 
@@ -457,6 +452,7 @@ function enemy1Hit(pB, e1){
     //new explosion --> animation
     var exp = explosions.create(e1.x, e1.y, 'explosion').setScale(3);
     exp.anims.play('explode', true);
+    expSound1.play();
     //destroy both entities that collided
     pB.destroy();
     e1.destroy();
@@ -474,14 +470,50 @@ function enemy1Hit(pB, e1){
 
 
 function playerHit(p,e){
+    player.anims.play('explode', true);
+    expSound2.play();
     playerLives--;
     enemies1.children.iterate((e1) =>{
         e1.y = 0;
-        e1.setVelocityY(0);
+        e1.x = Phaser.Math.Between(100,1180);
+        e1.setVelocity(0, 0);
+        e1.rotation = 0;
     });
-    //set the other ones to not shoot
+    //set the other enemies to not shoot  ->>(when implemented)
     player.setVelocity(0,0);
     playerDead = true;
+    if(playerLives >= 0){
+        middleScreenText.style.color = '#f5e749';
+        middleScreenText.style.shadowColor = '#f07f16';
+        middleScreenText.setText('RESPAWNING');
+        middleScreenText.visible = true;
+    }
+    setTimeout(() => {
+        if(playerLives >= 0){
+            playerDead = false;
+            enemies1.children.iterate((e1) => {
+                e1.setVelocityY(400);
+            });
+            player.x = 600;
+            player.y = 500;
+            respawnSound.play();
+            middleScreenText.visible = false;
+        }
+        else{//GAME IS OVER
+            player.visible = false;
+            middleScreenText.style.color = '#ff4646';
+            middleScreenText.style.shadowColor = '#9e1328';
+            middleScreenText.visible = true;
+            middleScreenText.setText('GAME OVER');
+            scoreText.setOrigin(0.5, 0);
+            roundText.setOrigin(0.5, 0);
+            scoreText.x = middleScreenText.x;
+            scoreText.y = middleScreenText.y + 64;
+            roundText.x = middleScreenText.x;
+            roundText.y = scoreText.y + 32;
+            gameOverSound.play();
+        }
+    }, 3000);
 }
 
 
