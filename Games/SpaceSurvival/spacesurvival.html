@@ -62,6 +62,7 @@ var game = new Phaser.Game(config);
 var player;
 var playerBullets;
 var playerLives = 3;
+var livesImage;
 var playerDead = false;
 var fireTime = MAXFIRERATE = 8;
 //explosions
@@ -76,7 +77,7 @@ var enemies1;
 //input keys
 var keyW, keyA, keyS, keyD, keySpace, keyEnter;
 //text
-var FPS, scoreText, roundText, middleScreenText;
+var FPS, scoreText, roundText, middleScreenText, playerLivesText;
 //score et. al.
 var score = 0, round = 1;
 var enemies1Spawned = 0, enemies1Left = 0, maxE1 = 3, e1Killed = 0;
@@ -94,6 +95,7 @@ function preload(){
     this.load.image('star','assets/star.png');
     this.load.image('sideRock','assets/clouds.png');
     this.load.image('pBullet','assets/pBullet.png');
+    this.load.image('shipGUI', 'assets/shipGUI.png');
     
     //spritesheets
     this.load.spritesheet('shipNT','assets/shipST.png', {frameWidth: 16, frameHeight: 14});
@@ -238,8 +240,14 @@ function create(){
     scoreText.setShadow(4,4,'#1070a7');
     roundText = this.add.text(20,48,'', { fontFamily: 'serious1', fontSize: '32px', fill: '#ffffff'});
     roundText.setShadow(4,4,'#1070a7');
+    playerLivesText = this.add.text(50,650,'', { fontFamily: 'serious1', fontSize: '30px', fill: '#ffffff'}).setOrigin(0,0.5);
+    playerLivesText.setShadow(4,4,'#1070a7');
     middleScreenText = this.add.text(640,240,'', { fontFamily: 'serious1', fontSize: '64px', color: '#77cc2a'}).setOrigin(0.5,0);
     middleScreenText.setShadow(4, 4, '#008050')
+    
+    //GUI
+    livesImage = this.add.image(100,650,'shipGUI').setScale(5);
+    livesImage.visible = false;
 
     //audio
     fire = this.sound.add('fire');
@@ -368,8 +376,10 @@ function update(){
             clearInterval(flashInt);
             middleScreenText.visible = true;//the flash could ended with it invisible
             middleScreenText.setText(countDown);
-            scoreText.setText("SCORE: 0")
-            roundText.setText("ROUND: 1")
+            scoreText.setText("SCORE: 0");
+            roundText.setText("ROUND: 1");
+            playerLivesText.setText(playerLives);
+            livesImage.visible = true;
             nextRoundCalled = true;
         }
     }
@@ -406,9 +416,9 @@ function gameStart_Spawn(){
     }, 1000);
 
     setTimeout(() => {
-        spawnEnemy('enemies1',320,0,0,400,3,0);
-        spawnEnemy('enemies1',640,0,0,400,3,0);
-        spawnEnemy('enemies1',960,0,0,400,3,0);
+        spawnEnemy('enemies1',320,-500,0,400,3,0);
+        spawnEnemy('enemies1',640,-500,0,400,3,0);
+        spawnEnemy('enemies1',960,-500,0,400,3,0);
         enemies1Spawned = 3;
         enemies1Left = 0;
         gameStarted=true;
@@ -431,7 +441,7 @@ function newRound(e1Count, e2Count, e3Count){
         //enemies1
         enemies1Left = e1Count;
         for(let i = 0; i < maxE1; i++){
-            spawnEnemy('enemies1',Phaser.Math.Between(0,1280), 0, 0, 400, 3, 0);
+            spawnEnemy('enemies1',Phaser.Math.Between(0,1280), -500, 0, 400, 3, 0);
             enemies1Spawned++;
             enemies1Left--;
         }
@@ -444,7 +454,8 @@ function newRound(e1Count, e2Count, e3Count){
 
 
 function spawnEnemy(key, x, y, velX, velY, scale, rotation){
-    enemies1.create(x,y,key).setScale(scale).setVelocity(velX,velY).setRotation(rotation);
+    var newE1 = enemies1.create(x,y,key).setScale(scale).setVelocity(velX,velY).setRotation(rotation);
+    if(playerDead){newE1.setVelocity(0,0);}
 }
 
 
@@ -462,7 +473,7 @@ function enemy1Hit(pB, e1){
     enemies1Spawned--;
     e1Killed++;
     if(enemies1Left > 0){
-        spawnEnemy('enemies1',Phaser.Math.Between(0,1280), 0, 0, 400, 3, 0);
+        spawnEnemy('enemies1',Phaser.Math.Between(0,1280), -500, 0, 400, 3, 0);
         enemies1Spawned++;
         enemies1Left--;
     }
@@ -473,8 +484,9 @@ function playerHit(p,e){
     player.anims.play('explode', true);
     expSound2.play();
     playerLives--;
+    playerLivesText.setText(playerLives);
     enemies1.children.iterate((e1) =>{
-        e1.y = 0;
+        e1.y = -500;
         e1.x = Phaser.Math.Between(100,1180);
         e1.setVelocity(0, 0);
         e1.rotation = 0;
@@ -482,14 +494,14 @@ function playerHit(p,e){
     //set the other enemies to not shoot  ->>(when implemented)
     player.setVelocity(0,0);
     playerDead = true;
-    if(playerLives >= 0){
+    if(playerLives > 0){
         middleScreenText.style.color = '#f5e749';
         middleScreenText.style.shadowColor = '#f07f16';
         middleScreenText.setText('RESPAWNING');
         middleScreenText.visible = true;
     }
     setTimeout(() => {
-        if(playerLives >= 0){
+        if(playerLives > 0){
             playerDead = false;
             enemies1.children.iterate((e1) => {
                 e1.setVelocityY(400);
@@ -501,6 +513,8 @@ function playerHit(p,e){
         }
         else{//GAME IS OVER
             player.visible = false;
+            playerLivesText.visible = false;
+            livesImage.visible = false;
             middleScreenText.style.color = '#ff4646';
             middleScreenText.style.shadowColor = '#9e1328';
             middleScreenText.visible = true;
