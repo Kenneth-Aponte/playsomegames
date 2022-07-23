@@ -328,16 +328,26 @@ function update(){
             }
         });
 
-        //enemy movement -->mostly temp
+        //enemy movement 
         enemies1.children.each((e1) =>{
             if(e1.y >= 720){
                 e1.y = 0;
                 e1.x = (Phaser.Math.Between(0,1280));
-                const _vel = 600;
-                const _angle = Phaser.Math.FloatBetween(Math.PI/2 + Math.PI/4, Math.PI + Math.PI/4);
-                e1.rotation = _angle;
-                e1.setVelocityX(Math.sin(Math.PI - _angle)*_vel);
-                e1.setVelocityY(Math.cos(Math.PI - _angle)*_vel);
+            }
+            
+            if(player.y - e1.y > 200){
+                const _vel = 500;
+                const _angle = Math.atan((player.y - e1.y)/(player.x - e1.x));
+                e1.rotation = (player.x > e1.x) ? -Math.PI/2 + _angle: Math.PI/2 + _angle;
+    
+                if(player.x > e1.x){
+                    e1.setVelocityX(Math.cos(_angle)*_vel);
+                    e1.setVelocityY(Math.sin(_angle)*_vel);//check
+                }
+                else {
+                    e1.setVelocityX(Math.cos(Math.PI-_angle)*_vel);
+                    e1.setVelocityY(Math.sin(-_angle)*_vel);
+                }
             }
         });
 
@@ -362,7 +372,7 @@ function update(){
             introSong.volume -= 0.01;
         }
 
-    }else if(loaded){
+    }else if(loaded && !playerDead){
         if(middleScreenText.text == ''){
             middleScreenText.setText('PRESS ENTER TO START!');
             flashInt = setInterval(() => {
@@ -416,9 +426,9 @@ function gameStart_Spawn(){
     }, 1000);
 
     setTimeout(() => {
-        spawnEnemy('enemies1',320,-500,0,400,3,0);
+        spawnEnemy('enemies1',0,-500,0,400,3,0);
         spawnEnemy('enemies1',640,-500,0,400,3,0);
-        spawnEnemy('enemies1',960,-500,0,400,3,0);
+        spawnEnemy('enemies1',1280,-500,0,400,3,0);
         enemies1Spawned = 3;
         enemies1Left = 0;
         gameStarted=true;
@@ -504,7 +514,7 @@ function playerHit(p,e){
         if(playerLives > 0){
             playerDead = false;
             enemies1.children.iterate((e1) => {
-                e1.setVelocityY(400);
+                e1.setVelocityY(500);
             });
             player.x = 600;
             player.y = 500;
