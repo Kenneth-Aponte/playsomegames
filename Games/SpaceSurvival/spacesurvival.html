@@ -219,7 +219,7 @@ function create(){
     this.anims.create({
         key: 'move1',
         frames: this.anims.generateFrameNumbers('enemies1',{start: 0, end: 4}),
-        frameRate: 15,
+        frameRate: 7,
         repeat: -1
     });
 
@@ -355,12 +355,12 @@ function update(){
             
             if(player.y - e1.y > 200){
                 const _vel = 500;
-                const _angle = Math.atan((player.y - e1.y)/(player.x - e1.x));
-                e1.rotation = (player.x > e1.x) ? -Math.PI/2 + _angle: Math.PI/2 + _angle;
+                const _angle = Math.atan((player.y - e1.y)/((player.x + player.body.width/2) - e1.x));
+                e1.rotation = ((player.x + player.body.width/2) > e1.x) ? -Math.PI/2 + _angle: Math.PI/2 + _angle;
     
-                if(player.x > e1.x){
+                if((player.x + player.body.width/2) > e1.x){
                     e1.setVelocityX(Math.cos(_angle)*_vel);
-                    e1.setVelocityY(Math.sin(_angle)*_vel);//check
+                    e1.setVelocityY(Math.sin(_angle)*_vel);
                 }
                 else {
                     e1.setVelocityX(Math.cos(Math.PI-_angle)*_vel);
@@ -409,6 +409,8 @@ function update(){
         //new round check
         if(!nextRoundCalled && (enemies1Spawned == 0 && enemies1Left == 0)  && (enemies2Spawned == 0 && enemies2Left == 0)/* and the other enemies later on*/){
             countDown = 3;
+            middleScreenText.style.color = '#77cc2a';
+            middleScreenText.style.shadowColor = '#008050';
             middleScreenText.visible = true;
             middleScreenText.setText('NEXT ROUND IN ' + countDown.toString())
             newRound(e1Killed*2,e2Killed*2,e3Killed*2);
@@ -475,13 +477,13 @@ function gameStart_Spawn(){
 
     setTimeout(() => {
         spawnEnemy('enemies1',0,-500,0,400,3,0);
-        spawnEnemy('enemies1',640,-500,0,400,3,0);
+        spawnEnemy('enemies1',641,-500,0,400,3,0);
         spawnEnemy('enemies1',1280,-500,0,400,3,0);
 
-        spawnEnemy('enemies2',256, 0,0,200,3,Math.PI);
-        spawnEnemy('enemies2',512, 0,0,200,3,Math.PI);
-        spawnEnemy('enemies2',768, 0,0,200,3,Math.PI);
-        spawnEnemy('enemies2',1024, 0,0,200,3,Math.PI);
+        spawnEnemy('enemies2',256, 0,0,200,3,0);
+        spawnEnemy('enemies2',512, 0,0,200,3,0);
+        spawnEnemy('enemies2',768, 0,0,200,3,0);
+        spawnEnemy('enemies2',1024, 0,0,200,3,0);
 
         enemies1Spawned = 3;
         enemies2Spawned = 4;
@@ -499,6 +501,8 @@ function newRound(e1Count, e2Count, e3Count){
     newRoundSound.play();
     countDownInt = setInterval(() => {
         countDown--;
+        middleScreenText.style.color = '#77cc2a';
+        middleScreenText.style.shadowColor = '#008050';
         middleScreenText.setText('NEXT ROUND IN ' + countDown.toString());
     }, 1000);
 
@@ -515,10 +519,10 @@ function newRound(e1Count, e2Count, e3Count){
         //enemies2
         enemies2Left = e2Count - 4;
         enemies2Spawned = 4;
-        spawnEnemy('enemies2',256, 0,0,200,3,Math.PI);
-        spawnEnemy('enemies2',512, 0,0,200,3,Math.PI);
-        spawnEnemy('enemies2',768, 0,0,200,3,Math.PI);
-        spawnEnemy('enemies2',1024, 0,0,200,3,Math.PI);
+        spawnEnemy('enemies2',256, 0,0,200,3,0);
+        spawnEnemy('enemies2',512, 0,0,200,3,0);
+        spawnEnemy('enemies2',768, 0,0,200,3,0);
+        spawnEnemy('enemies2',1024, 0,0,200,3,0);
 
         nextRoundCalled = false;
         middleScreenText.visible = false;
@@ -580,7 +584,7 @@ function enemy2Hit(pB, e2){
     enemies2Spawned--;
     e2Killed++;
     if(enemies2Left > 0){
-        spawnEnemy('enemies2',newX, -300, 0,200,3,Math.PI);
+        spawnEnemy('enemies2',newX, -300, 0,200,3,0);
         enemies2Spawned++;
         enemies2Left--;
     }
