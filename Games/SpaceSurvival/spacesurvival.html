@@ -76,7 +76,7 @@ var sideRocks;
 var enemies1, enemies2;
 var e2Bullets;
 //input keys
-var keyW, keyA, keyS, keyD, keySpace, keyEnter;
+var keyW, keyA, keyS, keyD, cursors, keySpace, keyEnter;
 //text
 var FPS, scoreText, roundText, middleScreenText, playerLivesText;
 //score et. al.
@@ -87,7 +87,7 @@ var enemies3Spawned = 0, enemies3Left = 0, maxE3 = undefined, e3Killed = 0;
 //sounds
 var introSong, fire, expSound1, expSound2, respawnSound, newRoundSound, gameOverSound;
 //other flags
-var loaded = false, gameStarted = false, nextRoundCalled = false, countDown = 5;
+var loaded = false, gameStarted = false, gameOver = false, nextRoundCalled = false, countDown = 5;
 var flashInt, countDownInt;//intervals
 
 
@@ -121,7 +121,7 @@ function preload(){
 
 
 function create(){
-    this.physics.world.setBounds(140,0,1000,720);
+    this.physics.world.setBounds(140,200,1000,520);
 
     //space (aka moving stars)
     stars = this.physics.add.group({
@@ -249,6 +249,9 @@ function create(){
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+    cursors = this.input.keyboard.createCursorKeys();
+
     keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
@@ -281,11 +284,11 @@ function create(){
 function update(){
     if(gameStarted && !playerDead){
         //movement vertical
-        if(keyW.isDown && !keyA.isDown && !keyD.isDown){
+        if((keyW.isDown || cursors.up.isDown) && !keyA.isDown && !cursors.left.isDown && !keyD.isDown && !cursors.right.isDown){
             player.anims.play('centerBT', true);
             player.setVelocityY(-500);
         }
-        else if(keyS.isDown && !keyA.isDown && !keyD.isDown){
+        else if((keyS.isDown || cursors.down.isDown) && !keyA.isDown && !cursors.left.isDown && !keyD.isDown && !cursors.right.isDown){
             player.anims.play('centerNT', true);
             player.setVelocityY(500);
         }
@@ -295,12 +298,12 @@ function update(){
         }
 
         //movement horizontal
-        if(keyA.isDown){
-            if(keyW.isDown){
+        if(keyA.isDown || cursors.left.isDown){
+            if(keyW.isDown || cursors.up.isDown){
                 player.anims.play('leftBT', true);
                 player.setVelocity(-353,-353);
             }
-            else if(keyS.isDown){
+            else if(keyS.isDown || cursors.down.isDown){
                 player.anims.play('leftNT', true);
                 player.setVelocity(-353,353);
             }else{
@@ -308,12 +311,12 @@ function update(){
                 player.setVelocityX(-500);
             }
         }
-        else if(keyD.isDown){
-            if(keyW.isDown){
+        else if(keyD.isDown || cursors.right.isDown){
+            if(keyW.isDown || cursors.up.isDown){
                 player.anims.play('rightBT', true);
                 player.setVelocity(353,-353);
             }
-            else if(keyS.isDown){
+            else if(keyS.isDown || cursors.down.isDown){
                 player.anims.play('rightNT', true);
                 player.setVelocity(353,353);
             }else{
@@ -387,7 +390,7 @@ function update(){
             //randomly shoot
             if(e2.y >= 0 && Phaser.Math.Between(0,200) == 1){
                 //shoot
-                e2Bullets.create(e2.x, e2.y,'e2Bullet').setVelocityY(1000).setScale(3);
+                e2Bullets.create(e2.x, e2.y,'e2Bullet').setVelocityY(700).setScale(3);
                 //play a sound
             }
 
@@ -443,6 +446,11 @@ function update(){
             nextRoundCalled = true;
         }
     }
+    else if(gameOver){
+        if(keyEnter.isDown){
+            window.location.reload();
+        }
+    }
     
     //moving sensation
     //change star X and reset Y to make a moving space
@@ -476,14 +484,14 @@ function gameStart_Spawn(){
     }, 1000);
 
     setTimeout(() => {
-        spawnEnemy('enemies1',0,-500,0,400,3,0);
-        spawnEnemy('enemies1',641,-500,0,400,3,0);
-        spawnEnemy('enemies1',1280,-500,0,400,3,0);
+        spawnEnemy('enemies1',0,-1000,0,400,3,0);
+        spawnEnemy('enemies1',641,-1000,0,400,3,0);
+        spawnEnemy('enemies1',1280,-1000,0,400,3,0);
 
-        spawnEnemy('enemies2',256, 0,0,200,3,0);
-        spawnEnemy('enemies2',512, 0,0,200,3,0);
-        spawnEnemy('enemies2',768, 0,0,200,3,0);
-        spawnEnemy('enemies2',1024, 0,0,200,3,0);
+        spawnEnemy('enemies2',256, -1000,0,200,3,0);
+        spawnEnemy('enemies2',512, -1000,0,200,3,0);
+        spawnEnemy('enemies2',768, -1000,0,200,3,0);
+        spawnEnemy('enemies2',1024, -1000,0,200,3,0);
 
         enemies1Spawned = 3;
         enemies2Spawned = 4;
@@ -512,17 +520,17 @@ function newRound(e1Count, e2Count, e3Count){
         //enemies1
         enemies1Left = e1Count;
         for(let i = 0; i < maxE1; i++){
-            spawnEnemy('enemies1',Phaser.Math.Between(0,1280), -500, 0, 400, 3, 0);
+            spawnEnemy('enemies1',Phaser.Math.Between(0,1280), -1000, 0, 400, 3, 0);
             enemies1Spawned++;
             enemies1Left--;
         }
         //enemies2
         enemies2Left = e2Count - 4;
         enemies2Spawned = 4;
-        spawnEnemy('enemies2',256, 0,0,200,3,0);
-        spawnEnemy('enemies2',512, 0,0,200,3,0);
-        spawnEnemy('enemies2',768, 0,0,200,3,0);
-        spawnEnemy('enemies2',1024, 0,0,200,3,0);
+        spawnEnemy('enemies2',256, -1000,0,200,3,0);
+        spawnEnemy('enemies2',512, -1000,0,200,3,0);
+        spawnEnemy('enemies2',768, -1000,0,200,3,0);
+        spawnEnemy('enemies2',1024, -1000,0,200,3,0);
 
         nextRoundCalled = false;
         middleScreenText.visible = false;
@@ -560,7 +568,7 @@ function enemy1Hit(pB, e1){
     enemies1Spawned--;
     e1Killed++;
     if(enemies1Left > 0){
-        spawnEnemy('enemies1',Phaser.Math.Between(0,1280), -500, 0, 400, 3, 0);
+        spawnEnemy('enemies1',Phaser.Math.Between(0,1280), -1000, 0, 400, 3, 0);
         enemies1Spawned++;
         enemies1Left--;
     }
@@ -584,7 +592,7 @@ function enemy2Hit(pB, e2){
     enemies2Spawned--;
     e2Killed++;
     if(enemies2Left > 0){
-        spawnEnemy('enemies2',newX, -300, 0,200,3,0);
+        spawnEnemy('enemies2',newX, -1000, 0,200,3,0);
         enemies2Spawned++;
         enemies2Left--;
     }
@@ -598,14 +606,14 @@ function playerHit(p,e){
     playerLivesText.setText(playerLives);
     
     enemies1.children.iterate((e1) =>{
-        e1.y = -500;
+        e1.y = -1000;
         e1.x = Phaser.Math.Between(100,1180);
         e1.setVelocity(0, 0);
         e1.rotation = 0;
     });
     
     enemies2.children.iterate((e2) => {
-        e2.y = -300;
+        e2.y = -500;
         e2.setVelocityY(0);
     });
 
@@ -650,6 +658,7 @@ function playerHit(p,e){
             roundText.x = middleScreenText.x;
             roundText.y = scoreText.y + 32;
             gameOverSound.play();
+            gameOver = true;
         }
     }, 3000);
 }
