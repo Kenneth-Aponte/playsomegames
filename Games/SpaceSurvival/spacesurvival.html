@@ -64,7 +64,8 @@ var playerBullets;
 var playerLives = 3;
 var livesImage;
 var playerDead = false;
-var fireTime = MAXFIRERATE = 8;
+var fireTime = MAXFIRERATE = 8, bulletsShot = 0, bulletsMissed = 0;
+var accuracy = 0;
 //explosions
 var explosions;
 //stars
@@ -78,7 +79,7 @@ var e2Bullets;
 //input keys
 var keyW, keyA, keyS, keyD, cursors, keySpace, keyEnter;
 //text
-var FPS, scoreText, roundText, middleScreenText, playerLivesText;
+var FPS, scoreText, roundText, middleScreenText, playerLivesText, gameOverBottomText, accuracyText;
 //score et. al.
 var score = 0, round = 1;
 var enemies1Spawned = 0, enemies1Left = 0, maxE1 = 3, e1Killed = 0;
@@ -258,13 +259,18 @@ function create(){
     //text
     FPS = this.add.text(1220, 16, '0', { fontFamily: 'serious1', fontSize: '32px', fill: '#ffffff' });
     scoreText = this.add.text(20,16,'', { fontFamily: 'serious1', fontSize: '32px', fill: '#ffffff'});
-    scoreText.setShadow(4,4,'#1070a7');
+    scoreText.setShadow(3,3,'#1070a7');
     roundText = this.add.text(20,48,'', { fontFamily: 'serious1', fontSize: '32px', fill: '#ffffff'});
-    roundText.setShadow(4,4,'#1070a7');
+    roundText.setShadow(3,3,'#1070a7');
+    accuracyText = this.add.text(20,48,'', { fontFamily: 'serious1', fontSize: '64px', fill: '#ffffff'}).setOrigin(0.5,0);
+    accuracyText.setShadow(4,4,'#1070a7');
+    accuracyText.visible = false;
     playerLivesText = this.add.text(50,650,'', { fontFamily: 'serious1', fontSize: '30px', fill: '#ffffff'}).setOrigin(0,0.5);
-    playerLivesText.setShadow(4,4,'#1070a7');
+    playerLivesText.setShadow(3,3,'#1070a7');
     middleScreenText = this.add.text(640,240,'', { fontFamily: 'serious1', fontSize: '64px', color: '#77cc2a'}).setOrigin(0.5,0);
-    middleScreenText.setShadow(4, 4, '#008050')
+    middleScreenText.setShadow(4, 4, '#008050');
+    gameOverBottomText = this.add.text(0,0,'', { fontFamily: 'serious1', fontSize: '28px', color: '#77cc2a'}).setOrigin(0.5,0);
+    gameOverBottomText.setShadow(2, 2, '#008050');
     
     //GUI
     livesImage = this.add.image(100,650,'shipGUI').setScale(5);
@@ -336,6 +342,7 @@ function update(){
             fire.play();
             fireTime = MAXFIRERATE;
             playerBullets.create(player.x+40, player.y, 'pBullet').setVelocityY(-1000).setScale(3);
+            bulletsShot++;
         } 
         playerBullets.children.each((pB) => {
             //out of screeen
@@ -346,8 +353,14 @@ function update(){
                     score -=5;
                     scoreText.setText('SCORE: ' + score.toString());
                 }
+                bulletsMissed++;
             }
         });
+
+        //accuracy 
+        if(bulletsShot > 0){//obvious reasons
+            accuracy = (bulletsShot - bulletsMissed)/bulletsShot * 100;
+        }
 
         //enemy1 movement 
         enemies1.children.each((e1) =>{
@@ -516,11 +529,14 @@ function newRound(e1Count, e2Count, e3Count){
 
     setTimeout(() => {
         round++;
+        if(round%3 == 0){
+            maxE1 += 1;
+        }
 
         //enemies1
         enemies1Left = e1Count;
         for(let i = 0; i < maxE1; i++){
-            spawnEnemy('enemies1',Phaser.Math.Between(0,1280), -1000, 0, 400, 3, 0);
+            spawnEnemy('enemies1',Phaser.Math.Between(0,1280), -Phaser.Math.Between(200,2000), 0, 400, 3, 0);
             enemies1Spawned++;
             enemies1Left--;
         }
@@ -600,67 +616,92 @@ function enemy2Hit(pB, e2){
 
 
 function playerHit(p,e){
-    player.anims.play('explode', true);
-    expSound2.play();
-    playerLives--;
-    playerLivesText.setText(playerLives);
+    if(!playerDead){//avoid player being hit by 2 at the same time
+        player.anims.play('explode', true);
+        expSound2.play();
+        playerLives--;
+        playerLivesText.setText(playerLives);
+        
+        enemies1.children.iterate((e1) =>{
+            e1.y = -Phaser.Math.Between(200,2000);
+            e1.x = Phaser.Math.Between(100,1180);
+            e1.setVelocity(0, 0);
+            e1.rotation = 0;
+        });
+        
+        enemies2.children.iterate((e2) => {
+            e2.y = -500;
+            e2.setVelocityY(0);
+        });
     
-    enemies1.children.iterate((e1) =>{
-        e1.y = -1000;
-        e1.x = Phaser.Math.Between(100,1180);
-        e1.setVelocity(0, 0);
-        e1.rotation = 0;
-    });
+        e2Bullets.children.each((e2B) => {
+            e2B.destroy();
+        });
     
-    enemies2.children.iterate((e2) => {
-        e2.y = -500;
-        e2.setVelocityY(0);
-    });
-
-    e2Bullets.children.each((e2B) => {
-        e2B.destroy();
-    });
-
-    player.setVelocity(0,0);
-    playerDead = true;
-    if(playerLives > 0){
-        middleScreenText.style.color = '#f5e749';
-        middleScreenText.style.shadowColor = '#f07f16';
-        middleScreenText.setText('RESPAWNING');
-        middleScreenText.visible = true;
-    }
-    setTimeout(() => {
+        player.setVelocity(0,0);
+        playerDead = true;
         if(playerLives > 0){
-            playerDead = false;
-            enemies1.children.iterate((e1) => {
-                e1.setVelocityY(500);
-            });
-            enemies2.children.iterate((e2) => {
-                e2.setVelocityY(200);
-            })
-            player.x = 600;
-            player.y = 500;
-            respawnSound.play();
-            middleScreenText.visible = false;
-        }
-        else{//GAME IS OVER
-            player.visible = false;
-            playerLivesText.visible = false;
-            livesImage.visible = false;
-            middleScreenText.style.color = '#ff4646';
-            middleScreenText.style.shadowColor = '#9e1328';
+            middleScreenText.style.color = '#f5e749';
+            middleScreenText.style.shadowColor = '#f07f16';
+            middleScreenText.setText('RESPAWNING');
             middleScreenText.visible = true;
-            middleScreenText.setText('GAME OVER');
-            scoreText.setOrigin(0.5, 0);
-            roundText.setOrigin(0.5, 0);
-            scoreText.x = middleScreenText.x;
-            scoreText.y = middleScreenText.y + 64;
-            roundText.x = middleScreenText.x;
-            roundText.y = scoreText.y + 32;
-            gameOverSound.play();
-            gameOver = true;
         }
-    }, 3000);
+        setTimeout(() => {
+            if(playerLives > 0){
+                playerDead = false;
+                enemies1.children.iterate((e1) => {
+                    e1.setVelocityY(500);
+                });
+                enemies2.children.iterate((e2) => {
+                    e2.setVelocityY(200);
+                })
+                player.x = 600;
+                player.y = 500;
+                respawnSound.play();
+                middleScreenText.visible = false;
+            }
+            else{//GAME IS OVER
+                player.visible = false;
+                playerLivesText.visible = false;
+                livesImage.visible = false;
+                
+                middleScreenText.style.color = '#ff4646';
+                middleScreenText.style.shadowColor = '#9e1328';
+                middleScreenText.setFontSize(128);
+                middleScreenText.setShadowOffset(8,8);
+                middleScreenText.y = 150;
+                middleScreenText.setText('GAME OVER');
+                middleScreenText.visible = true;
+                
+                scoreText.setOrigin(0.5, 0);
+                scoreText.setFontSize(64);
+                roundText.setOrigin(0.5, 0);
+                roundText.setFontSize(64);
+                scoreText.setShadowOffset(4,4);
+                roundText.setShadowOffset(4,4);
+                scoreText.x = middleScreenText.x;
+                scoreText.y = middleScreenText.y + 180;
+                roundText.x = middleScreenText.x;
+                roundText.y = scoreText.y + 80;
+                accuracyText.x = middleScreenText.x;
+                accuracyText.y = roundText.y + 80;
+                accuracyText.setText('ACCURACY: ' +  Phaser.Math.RoundTo(accuracy, -1) + '%');
+                accuracyText.visible = true;
+    
+                gameOverBottomText.setOrigin(0.5,0);
+                gameOverBottomText.x = middleScreenText.x;
+                gameOverBottomText.y = 680;
+                gameOverBottomText.setText('PRESS ENTER TO RESTART!');
+                
+                setInterval(() =>{
+                    gameOverBottomText.visible = !gameOverBottomText.visible; 
+                }, 500);
+                
+                gameOverSound.play();
+                gameOver = true;
+            }
+        }, 3000);
+    }
 }
 
 
