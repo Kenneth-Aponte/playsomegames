@@ -9,6 +9,7 @@ var selectorImg = document.getElementById('gameSelectorImg');
 var arrowKeys = document.getElementById('arrowKeys');
 var enterKey = document.getElementById('enterKey');
 var g_CS = document.getElementById('comingSoonImg');
+var g_SS = document.getElementById('spaceSurvivalImg');
 
 //resize setup
 ctx.webkitImageSmoothingEnabled = false;
@@ -168,7 +169,7 @@ function animate(){
 
 //gamneListCreation
 function populateGameList(){
-    gameList.push(new Game("Space Survival", g_CS, -imageW/2, true));
+    gameList.push(new Game("Space Survival", g_SS, -imageW/2, true));
     gameList.push(new Game("Coming Soon", g_CS, (imageW/2 + dist), true));
     gameList.push(new Game("Coming Soon", g_CS, (imageW + imageW/2 + dist*2), true));
     gameList.push(new Game("Coming Soon", g_CS, (imageW*2 + imageW/2 + dist*3), true));
