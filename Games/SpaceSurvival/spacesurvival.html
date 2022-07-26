@@ -86,7 +86,7 @@ var enemies1Spawned = 0, enemies1Left = 0, maxE1 = 3, e1Killed = 0;
 var enemies2Spawned = 0, enemies2Left = 0, maxE2 = 4, e2Killed = 0;
 var enemies3Spawned = 0, enemies3Left = 0, maxE3 = undefined, e3Killed = 0;
 //sounds
-var introSong, fire, expSound1, expSound2, respawnSound, newRoundSound, gameOverSound;
+var introSong, fire1, fire2, expSound1, expSound2, expSound3, respawnSound, enemyMoveSound, newRoundSound, gameOverSound;
 //other flags
 var loaded = false, gameStarted = false, gameOver = false, nextRoundCalled = false, countDown = 5;
 var flashInt, countDownInt;//intervals
@@ -109,14 +109,16 @@ function preload(){
     this.load.spritesheet('explosion','assets/playerExplosion.png', {frameWidth: 16, frameHeight: 16});
 
     //audio
-    this.load.audio('fire','assets/LaserFire1.wav');
+    this.load.audio('fire1','assets/LaserFire1.wav');
+    this.load.audio('fire2','assets/LaserFire2.ogg');
     this.load.audio('intro','assets/intro_cut.mp3');
-    this.load.audio('explosion1', 'assets/Explosion1.wav');
+    this.load.audio('explosion1', 'assets/hurt.ogg');
     this.load.audio('explosion2', 'assets/Explosion2.wav');
+    this.load.audio('explosion3', 'assets/Explosion3.ogg');
     this.load.audio('respawn', 'assets/VictorySmall.wav');
     this.load.audio('newRound', 'assets/VictoryBig.wav');
     this.load.audio('gameOver', 'assets/GameOver.wav');
-  
+    this.load.audio('moveSound', 'assets/enemy2move.ogg')
     loadFont();
 }
 
@@ -277,11 +279,16 @@ function create(){
     livesImage.visible = false;
 
     //audio
-    fire = this.sound.add('fire');
+    fire1 = this.sound.add('fire1');
+    fire2 = this.sound.add('fire2');
+    fire2.volume = 0.5;
     introSong = this.sound.add('intro')
     expSound1 = this.sound.add('explosion1');
     expSound2 = this.sound.add('explosion2');
+    expSound2.volume = 0.5;
+    expSound3 = this.sound.add('explosion3');
     respawnSound = this.sound.add('respawn');
+    enemyMoveSound = this.sound.add('moveSound');
     newRoundSound = this.sound.add('newRound');
     gameOverSound = this.sound.add('gameOver');
 }
@@ -339,7 +346,7 @@ function update(){
             fireTime--;
         }
         else if(keySpace.isDown && !nextRoundCalled){
-            fire.play();
+            fire1.play();
             fireTime = MAXFIRERATE;
             playerBullets.create(player.x+40, player.y, 'pBullet').setVelocityY(-1000).setScale(3);
             bulletsShot++;
@@ -397,6 +404,7 @@ function update(){
                 //randomly move out of the screen
                 if(Phaser.Math.Between(0,600) == 1){
                         e2.setVelocityY(300);
+                        enemyMoveSound.play();
                 }
             }
 
@@ -404,7 +412,7 @@ function update(){
             if(e2.y >= 0 && Phaser.Math.Between(0,200) == 1){
                 //shoot
                 e2Bullets.create(e2.x, e2.y,'e2Bullet').setVelocityY(700).setScale(3);
-                //play a sound
+                fire2.play();
             }
 
         });
@@ -594,11 +602,8 @@ function enemy2Hit(pB, e2){
     //new explosion --> animation
     const newX = e2.x;
     var exp = explosions.create(e2.x, e2.y, 'explosion').setScale(3);
-    exp.anims.play('explode', true);
-
-    //play a different sound 
-    // expSound1.play();
-    
+    exp.anims.play('explode', true); 
+    expSound3.play();
     //destroy both entities that collided
     pB.destroy();
     e2.destroy();
