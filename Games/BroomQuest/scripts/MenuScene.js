@@ -1,17 +1,19 @@
 export default class MenuScene extends Phaser.Scene {
     constructor(){
-        super('MenuScene');
+        super('MenuScene');    
+        //moving witch
+        this.witch;
+        this.witchDir = "R";
+        //flags
+        this.loaded = false;
+        //buttons
+        this.startButtonText;
+        this.startButton;
+        //text
+        this.gameNameText;
     }
     
-    witch;
-    witchDir = "R";
-    //flags
-    loaded = false;
-    //buttons
-    startButtonText;
-    startButton;
-    //text
-    gameNameText;
+
 
 
     preload(){
@@ -24,6 +26,7 @@ export default class MenuScene extends Phaser.Scene {
         this.load.image('layer3', './assets/City Backround Layer3.png');
         this.load.image('layer2', './assets/City Backround Layer2.png');
         this.load.image('layer1', './assets/City Backround Layer1.png');
+        this.load.image('sword', './assets/sword.png');
 
         this.load.spritesheet('button1', './assets/button1.png',{frameWidth: 29, frameHeight: 10});
         this.load.spritesheet('witchR', './assets/witchRight.png',{frameWidth: 32, frameHeight: 26});
@@ -45,7 +48,7 @@ export default class MenuScene extends Phaser.Scene {
             this.add.image(0,0,'layer4').setOrigin(0,0).setScale(2.2,2);
             this.add.image(0,0,'layer3').setOrigin(0,0).setScale(2.2,2);
             this.add.image(0,0,'layer2').setOrigin(0,0).setScale(2.2,2);
-            this.add.image(0,0,'layer1').setOrigin(0,0).setScale(2.2,2);
+            this.add.image(0,-150,'layer1').setOrigin(0,0).setScale(2.2,2);
             
             //Buttons
             //start button
@@ -77,7 +80,7 @@ export default class MenuScene extends Phaser.Scene {
             this.startButton.on('pointerup', () => {
                 //changes to the next state
                 this.startButton.anims.play('rest');
-
+                this.startGame();
             });
 
             //text
@@ -89,13 +92,13 @@ export default class MenuScene extends Phaser.Scene {
             this.anims.create({
                 key: 'right',
                 frames: this.anims.generateFrameNumbers('witchR', {start: 0, end: 3}),
-                frameRate: 12,
+                frameRate: 16,
                 repeat: -1,
             });
             this.anims.create({
                 key: 'left',
                 frames: this.anims.generateFrameNumbers('witchL', {start: 0, end: 3}),
-                frameRate: 12,
+                frameRate: 16,
                 repeat: -1,
             });
 
@@ -106,28 +109,33 @@ export default class MenuScene extends Phaser.Scene {
 
     
     update(){
-        //witch movement around the screen
-        if(this.witchDir == "R"){//right
-            if(this.witch.body.velocity.x == 0 && Phaser.Math.Between(0, 100) == 1){//stopped moving
-                this.witch.setVelocityX(-200,0);
-                this.witchDir = "L";
+        if(this.loaded){
+            //witch movement around the screen
+            if(this.witchDir == "R"){//right
+                if(this.witch.body.velocity.x == 0 && Phaser.Math.Between(0, 100) == 1){//stopped moving
+                    this.witch.setVelocityX(-200,0);
+                    this.witchDir = "L";
+                }
+                else if(this.witch.x >= 1080){
+                    this.witch.setVelocity(0,0);
+                    this.witch.anims.play('left', true);
+                }
+            }else{//left
+                if(this.witch.body.velocity.x == 0 && Phaser.Math.Between(0, 100) == 1){//stopped moving
+                    this.witch.setVelocityX(200,0);
+                    this.witchDir = "R";
+                }
+                else if(this.witch.x <= 200){
+                    this.witch.setVelocity(0,0);
+                    this.witch.anims.play('right',true);
+                }    
             }
-            else if(this.witch.x >= 1080){
-                this.witch.setVelocity(0,0);
-                this.witch.anims.play('left', true);
-            }
-        }else{//left
-            if(this.witch.body.velocity.x == 0 && Phaser.Math.Between(0, 100) == 1){//stopped moving
-                this.witch.setVelocityX(200,0);
-                this.witchDir = "R";
-            }
-            else if(this.witch.x <= 200){
-                this.witch.setVelocity(0,0);
-                this.witch.anims.play('right',true);
-            }    
         }
+    }
 
-
+    startGame(){
+        this.scene.stop('GameScene');//just in case
+        this.scene.start('GameScene');
     }
 
     async loadFont(){

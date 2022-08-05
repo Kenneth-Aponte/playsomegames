@@ -1,5 +1,6 @@
-import GameScene from "./GameScene.js";
 import MenuScene from "./MenuScene.js";
+import GameScene from "./GameScene.js";
+import GameOverScene from "./GameOverScene.js";
 
 var config = {
     type: Phaser.AUTO,
@@ -22,7 +23,7 @@ var config = {
     },
     pixelArt: true,
     parent: 'main',
-    scene: [MenuScene, GameScene],
+    scene: [MenuScene, GameScene, GameOverScene],
 
 };
 
