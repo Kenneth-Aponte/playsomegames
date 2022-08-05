@@ -25,15 +25,11 @@ export default class GameOverScene extends Phaser.Scene {
         this.scene.add('GameScene', GameScene);
         
         //static images --> background
-        this.add.image(0,0,'layer9').setOrigin(0,0).setScale(2.2,2);
-        this.add.image(0,0,'layer8').setOrigin(0,0).setScale(2,2);
-        this.add.image(0,0,'layer7').setOrigin(0,0).setScale(2.2,2);
-        this.add.image(0,0,'layer6').setOrigin(0,0).setScale(2.2,2);
-        this.add.image(0,0,'layer5').setOrigin(0,0).setScale(2.2,2);
-        this.add.image(0,0,'layer4').setOrigin(0,0).setScale(2.2,2);
-        this.add.image(0,0,'layer3').setOrigin(0,0).setScale(2.2,2);
-        this.add.image(0,0,'layer2').setOrigin(0,0).setScale(2.2,2);
-        this.add.image(0,-150,'layer1').setOrigin(0,0).setScale(2.2,2);
+        this.add.image(640,0,'layer9').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+        this.add.image(640,400,'layer6').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+        this.add.image(640,200,'layer5').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+        this.add.image(640,200,'layer3').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+        this.add.image(640,-180,'layer1').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
         
         //Buttons
         //menu button
@@ -75,7 +71,7 @@ export default class GameOverScene extends Phaser.Scene {
         this.scoreText.setShadow(45,45,'#8c8c8c');  
     }
 
-    
+
     startGame(){
         this.scene.stop('MenuScene');
         this.scene.start('MenuScene');

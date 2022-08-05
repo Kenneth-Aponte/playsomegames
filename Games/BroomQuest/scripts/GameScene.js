@@ -1,5 +1,5 @@
 import Player from "./player.js";
-import SwordPair from "./swordPair.js";
+import BombPair from "./bombPair.js";
 
 export default class GameScene extends Phaser.Scene {
     constructor(){
@@ -15,22 +15,19 @@ export default class GameScene extends Phaser.Scene {
 
     
     create(){
-        this.add.image(0,0,'layer9').setOrigin(0,0).setScale(2.2,2);//static
-        this.add.image(0,0,'layer8').setOrigin(0,0).setScale(2,2);//static
-        this.add.image(0,0,'layer7').setOrigin(0,0).setScale(2.2,2);//static
-        this.add.image(0,0,'layer6').setOrigin(0,0).setScale(2.2,2);//static
-        this.add.image(0,0,'layer5').setOrigin(0,0).setScale(2.2,2);//static
-        this.add.image(0,0,'layer4').setOrigin(0,0).setScale(2.2,2);//move
-        this.add.image(0,0,'layer3').setOrigin(0,0).setScale(2.2,2);//move
-        this.add.image(0,0,'layer2').setOrigin(0,0).setScale(2.2,2);//move
-        this.add.image(0,-150,'layer1').setOrigin(0,0).setScale(2.2,2);//move
+        //background
+        this.add.image(640,0,'layer9').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+        this.add.image(640,400,'layer6').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+        this.add.image(640,200,'layer5').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+        this.add.image(640,200,'layer3').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+        this.add.image(640,-180,'layer1').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
         
         
         //player
         this.player = new Player(this,400,300,'witchR');
         
-        //swords
-        this.swordPairs = [];
+        //Bombs
+        this.bombPairs = [];
         
         //keys
         this.keys = {
@@ -48,9 +45,9 @@ export default class GameScene extends Phaser.Scene {
         //entity updates
         if(!this.player.dead){
             this.player.update(this.keys);
-            this.swordPairs.forEach((sP) =>{
+            this.bombPairs.forEach((sP) =>{
                 sP.update();
-                if(!this.player.dead && (this.physics.world.collide(this.player, sP.getTopSword()) || this.physics.world.collide(this.player, sP.getBottomSword()))){
+                if(!this.player.dead && (this.physics.world.collide(this.player, sP.getTopBomb()) || this.physics.world.collide(this.player, sP.getBottomBomb()))){
                     this.player.dead = true;
                 }
             });
@@ -60,20 +57,20 @@ export default class GameScene extends Phaser.Scene {
                 this.player.body.setVelocityY(-550);
                 this.gameStarted = true;
                 this.pointerDown = false;
-                //populate swords list
-                this.swordPairs.push(new SwordPair(this,1500,Phaser.Math.Between(200,520),'sword'));
-                this.swordPairs.push(new SwordPair(this,2000,Phaser.Math.Between(200,520),'sword'));
-                this.swordPairs.push(new SwordPair(this,2500,Phaser.Math.Between(200,520),'sword'));
+                //populate bombs list
+                this.bombPairs.push(new BombPair(this,1500,Phaser.Math.Between(200,520),'bomb'));
+                this.bombPairs.push(new BombPair(this,2000,Phaser.Math.Between(200,520),'bomb'));
+                this.bombPairs.push(new BombPair(this,2500,Phaser.Math.Between(200,520),'bomb'));
                 //text
                 this.scoreText = this.add.text(640,200, this.score, { fontFamily: 'editundo', fontSize: '80px', color: '#d9d9d9'}).setOrigin(0.5,0.5).setResolution(5);
                 //hide controls and other stuff
             }
         }
         else {//game is over
-            this.swordPairs.forEach((sP2) =>{
+            this.bombPairs.forEach((sP2) =>{
                 
-                sP2.getTopSword().body.setVelocityX(0);
-                sP2.getBottomSword().body.setVelocityX(0);
+                sP2.getTopBomb().body.setVelocityX(0);
+                sP2.getBottomBomb().body.setVelocityX(0);
             });
             if(!this.nextSceneCalled){
                 setTimeout(() => {

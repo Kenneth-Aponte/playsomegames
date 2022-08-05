@@ -6,6 +6,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene.physics.world.enable(this);
         this.scene.add.existing(this);
         this.setScale(4);
+        this.body.setSize(20,20);
         this.anims.play('right');
 
         this.dead = false;

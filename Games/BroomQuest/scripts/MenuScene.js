@@ -26,12 +26,12 @@ export default class MenuScene extends Phaser.Scene {
         this.load.image('layer3', './assets/City Backround Layer3.png');
         this.load.image('layer2', './assets/City Backround Layer2.png');
         this.load.image('layer1', './assets/City Backround Layer1.png');
-        this.load.image('sword', './assets/sword.png');
 
         this.load.spritesheet('button1', './assets/button1.png',{frameWidth: 29, frameHeight: 10});
         this.load.spritesheet('witchR', './assets/witchRight.png',{frameWidth: 32, frameHeight: 26});
         this.load.spritesheet('witchL', './assets/witchLeft.png',{frameWidth: 32, frameHeight: 26});
-    
+        this.load.spritesheet('bombT', './assets/bomb_T.png', {frameWidth: 24, frameHeight: 256});
+        this.load.spritesheet('bombB', './assets/bomb_B.png', {frameWidth: 24, frameHeight: 256});
 
         this.loadFont();
     }
@@ -40,15 +40,11 @@ export default class MenuScene extends Phaser.Scene {
     create(){
         if(this.loaded){
             //static images --> background
-            this.add.image(0,0,'layer9').setOrigin(0,0).setScale(2.2,2);
-            this.add.image(0,0,'layer8').setOrigin(0,0).setScale(2,2);
-            this.add.image(0,0,'layer7').setOrigin(0,0).setScale(2.2,2);
-            this.add.image(0,0,'layer6').setOrigin(0,0).setScale(2.2,2);
-            this.add.image(0,0,'layer5').setOrigin(0,0).setScale(2.2,2);
-            this.add.image(0,0,'layer4').setOrigin(0,0).setScale(2.2,2);
-            this.add.image(0,0,'layer3').setOrigin(0,0).setScale(2.2,2);
-            this.add.image(0,0,'layer2').setOrigin(0,0).setScale(2.2,2);
-            this.add.image(0,-150,'layer1').setOrigin(0,0).setScale(2.2,2);
+            this.add.image(640,0,'layer9').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+            this.add.image(640,400,'layer6').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+            this.add.image(640,200,'layer5').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+            this.add.image(640,200,'layer3').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+            this.add.image(640,-180,'layer1').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
             
             //Buttons
             //start button
@@ -87,7 +83,7 @@ export default class MenuScene extends Phaser.Scene {
             this.gameNameText = this.add.text(640,200,'BROOM QUEST', { fontFamily: 'editundo', fontSize: '180px', color: '#d9d9d9'}).setOrigin(0.5,0).setResolution(10);
             this.gameNameText.setShadow(90,90,'#8c8c8c');
 
-            //witch
+            //animations
             this.witch = this.physics.add.sprite(200,150,'witchR').setScale(4);
             this.anims.create({
                 key: 'right',
@@ -100,6 +96,19 @@ export default class MenuScene extends Phaser.Scene {
                 frames: this.anims.generateFrameNumbers('witchL', {start: 0, end: 3}),
                 frameRate: 16,
                 repeat: -1,
+            });
+
+            this.anims.create({
+                key: 'tick_B',
+                frames: this.anims.generateFrameNumbers('bombB', {start: 0, end: 1}),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: 'tick_T',
+                frames: this.anims.generateFrameNumbers('bombT', {start: 0, end: 1}),
+                frameRate: 10,
+                repeat: -1
             });
 
             this.witch.anims.play('right');
