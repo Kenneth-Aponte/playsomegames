@@ -25,11 +25,11 @@ export default class GameOverScene extends Phaser.Scene {
         this.scene.add('GameScene', GameScene);
         
         //static images --> background
-        this.add.image(640,0,'layer9').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
-        this.add.image(640,400,'layer6').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
-        this.add.image(640,200,'layer5').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
-        this.add.image(640,200,'layer3').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
-        this.add.image(640,-180,'layer1').setOrigin(0,0).setScale(4,4).setOrigin(0.5,0.5);
+        this.add.image(640,0,'layer9').setScale(4).setOrigin(0.5,0.5);
+        this.add.image(640,400,'layer6').setScale(4).setOrigin(0.5,0.5);
+        this.add.image(640,200,'layer5').setScale(4).setOrigin(0.5,0.5);
+        this.add.image(640,200,'layer3').setScale(4).setOrigin(0.5,0.5);
+        this.add.image(640,-180,'layer1').setScale(4).setOrigin(0.5,0.5);
         
         //Buttons
         //menu button

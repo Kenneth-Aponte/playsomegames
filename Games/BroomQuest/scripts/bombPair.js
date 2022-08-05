@@ -3,7 +3,7 @@ export default class BombPair {
         this.scene = scene;
         this.addedScore = false;
 
-        this.topBomb = scene.physics.add.sprite(x,y,'bombT').setScale(4);
+        this.topBomb = scene.physics.add.sprite(x,y,'bombT').setScale(4).setTint('0x919aff');
         this.topBomb.y -= this.topBomb.height*4/2 + 85;   
         this.topBomb.body.setVelocityX(-400);
         this.topBomb.body.setAllowGravity(false);
@@ -11,7 +11,7 @@ export default class BombPair {
         this.topBomb.setImmovable(true);
         this.topBomb.anims.play('tick_T');
 
-        this.bottomBomb = scene.physics.add.sprite(x,y,'bombB').setScale(4);
+        this.bottomBomb = scene.physics.add.sprite(x,y,'bombB').setScale(4).setTint('0x919aff');
         this.bottomBomb.y += this.bottomBomb.height*4/2 + 85;
         this.bottomBomb.body.setVelocityX(-400);
         this.bottomBomb.body.setAllowGravity(false);
