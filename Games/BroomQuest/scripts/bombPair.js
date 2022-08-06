@@ -21,7 +21,6 @@ export default class BombPair {
 
         this.explosion = this.scene.add.sprite(300,100,'explosion').setScale(6);
         this.explosion.visible = false;
-        
     }
 
 
