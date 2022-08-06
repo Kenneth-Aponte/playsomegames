@@ -11,6 +11,8 @@ export default class GameOverScene extends Phaser.Scene {
 
         this.score;
         this.scoreText;
+
+        this.gameOverMusic;
     }
 
     init(data){
@@ -30,7 +32,7 @@ export default class GameOverScene extends Phaser.Scene {
         this.add.image(640,200,'layer5').setScale(4).setOrigin(0.5,0.5);
         this.add.image(640,200,'layer3').setScale(4).setOrigin(0.5,0.5);
         this.add.image(640,-180,'layer1').setScale(4).setOrigin(0.5,0.5);
-        
+
         //Buttons
         //menu button
         this.menuButton = this.physics.add.sprite(640,484,'button1').setScale(10);
@@ -68,11 +70,15 @@ export default class GameOverScene extends Phaser.Scene {
         this.gameOverText = this.add.text(640,200,'GAME OVER', { fontFamily: 'editundo', fontSize: '180px', color: '#d9d9d9'}).setOrigin(0.5,0.5).setResolution(10);
         this.gameOverText.setShadow(90,90,'#8c8c8c');
         this.scoreText = this.add.text(640,350,'SCORE: ' + this.score.toString(), { fontFamily: 'editundo', fontSize: '90px', color: '#d9d9d9'}).setOrigin(0.5,0.5).setResolution(10);
-        this.scoreText.setShadow(45,45,'#8c8c8c');  
+        this.scoreText.setShadow(45,45,'#8c8c8c');
+        
+        this.gameOverMusic = this.sound.add('game_over');
+        this.gameOverMusic.play();
     }
 
 
     startGame(){
+        this.gameOverMusic.stop();
         this.scene.stop('MenuScene');
         this.scene.start('MenuScene');
     }

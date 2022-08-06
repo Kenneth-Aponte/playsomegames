@@ -15,6 +15,11 @@ export default class GameScene extends Phaser.Scene {
         //text
         this.scoreText;
         this.controlsText;
+
+        //audio
+        this.startSound;
+        this.birdSound;
+        this.explosionSound;
     }
 
     
@@ -56,6 +61,9 @@ export default class GameScene extends Phaser.Scene {
             this.controlsText.visible = !this.controlsText.visible;
         }, 300);
 
+        this.startSound = this.sound.add('start');
+        this.birdSound = this.sound.add('bird');
+        this.explosionSound = this.sound.add('dead_explosion');
     }
 
 
@@ -85,8 +93,20 @@ export default class GameScene extends Phaser.Scene {
 
             this.bombPairs.forEach((sP) =>{
                 sP.update();
-                if(!this.player.dead && (this.physics.world.collide(this.player, sP.getTopBomb()) || this.physics.world.collide(this.player, sP.getBottomBomb()))){
-                    this.player.dead = true;
+                if(!this.player.dead){
+                    if(this.physics.world.collide(this.player, sP.getTopBomb())){
+                        this.player.dead = true;
+                        //top bomb explodes
+                        sP.hitTopBomb();
+                        this.explosionSound.play();
+
+                    }
+                    else if(this.physics.world.collide(this.player, sP.getBottomBomb())){
+                        this.player.dead = true;
+                        //bottom bomb explodes
+                        sP.hitBottomBomb();
+                        this.explosionSound.play();
+                    }
                 }
             });
             
@@ -105,9 +125,12 @@ export default class GameScene extends Phaser.Scene {
                 //hide controls 
                 clearInterval(this.controlsInterval);
                 this.controlsText.visible = false;
+                this.startSound.play();
             }
         }
         else {//game is over
+            //dead witch animation
+            this.player.rotation += 0.5;
             this.bombPairs.forEach((sP2) =>{
                 
                 sP2.getTopBomb().body.setVelocityX(0);
@@ -115,7 +138,6 @@ export default class GameScene extends Phaser.Scene {
             });
             if(!this.nextSceneCalled){
                 setTimeout(() => {
-                    // console.log(this.scene);
                     this.scene.stop('GameOverScene');
                     this.scene.start('GameOverScene', this.score.toString());
                 }, 2000);

@@ -11,6 +11,7 @@ export default class MenuScene extends Phaser.Scene {
         this.startButton;
         //text
         this.gameNameText;
+        this.introMusic;
     }
     
 
@@ -32,6 +33,14 @@ export default class MenuScene extends Phaser.Scene {
         this.load.spritesheet('witchL', './assets/witchLeft.png',{frameWidth: 32, frameHeight: 26});
         this.load.spritesheet('bombT', './assets/bomb_T.png', {frameWidth: 24, frameHeight: 256});
         this.load.spritesheet('bombB', './assets/bomb_B.png', {frameWidth: 24, frameHeight: 256});
+        this.load.spritesheet('explosion', './assets/explosion.png',{frameWidth: 16,frameHeight: 16});
+
+        this.load.audio('intro', './assets/intro_music.wav');
+        this.load.audio('start', './assets/secret.wav');
+        this.load.audio('bird', './assets/bird.wav');
+        this.load.audio('game_over', './assets/Game-Over.wav');
+        this.load.audio('dead_explosion', './assets/ExplosionSound.wav');
+
 
         this.loadFont();
     }
@@ -52,6 +61,7 @@ export default class MenuScene extends Phaser.Scene {
             this.startButtonText = this.add.text(640,480, 'PLAY', { fontFamily: 'editundo', fontSize: '80px', color: '#d9d9d9'}).setOrigin(0.5,0.5).setResolution(5);
             this.startButton.setInteractive();
 
+            //button animations
             this.anims.create({
                 key: 'rest',
                 frames: [{key: 'button1', frame: 0}]
@@ -98,6 +108,7 @@ export default class MenuScene extends Phaser.Scene {
                 repeat: -1,
             });
 
+            //bomb wick tick
             this.anims.create({
                 key: 'tick_B',
                 frames: this.anims.generateFrameNumbers('bombB', {start: 0, end: 1}),
@@ -111,8 +122,20 @@ export default class MenuScene extends Phaser.Scene {
                 repeat: -1
             });
 
+            //explosion
+            this.newAnim = this.anims.create({
+                key: 'bomb_explosion',
+                frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 4}),
+                frameRate: 5
+            });
+
+
             this.witch.anims.play('right');
             this.witch.setVelocityX(200);
+
+            this.introMusic = this.sound.add('intro');
+            this.introMusic.loop = true;
+            this.introMusic.play();
         }
     }
 
@@ -143,6 +166,7 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     startGame(){
+        this.introMusic.stop();
         this.scene.stop('GameScene');//just in case
         this.scene.start('GameScene');
     }

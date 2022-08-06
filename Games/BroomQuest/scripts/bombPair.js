@@ -18,8 +18,12 @@ export default class BombPair {
         this.bottomBomb.body.setSize(14,250);
         this.bottomBomb.setImmovable(true);
         this.bottomBomb.anims.play('tick_B');
+
+        this.explosion = this.scene.add.sprite(300,100,'explosion').setScale(6);
+        this.explosion.visible = false;
         
     }
+
 
     update(){
         if(this.topBomb.body.x <= -100){
@@ -33,13 +37,35 @@ export default class BombPair {
         if(this.topBomb.x <= 400 && !this.addedScore){
             this.scene.score+=1;
             this.scene.scoreText.setText(this.scene.score);
+            this.scene.birdSound.play();
             this.addedScore = true;
         }
     }
 
+    hitTopBomb(){
+        //place explosion where top bomb is
+        this.explosion.x = this.topBomb.x - 16;
+        this.explosion.y = this.topBomb.y + (this.topBomb.height*4/2 - 16*4);
+        this.explosion.visible = true;
+        this.topBomb.visible = false;
+        this.explosion.anims.play('bomb_explosion');
+    }
+
+
+    hitBottomBomb(){
+        //place explosion where bottom bomb is
+        this.explosion.x = this.bottomBomb.x - 16;
+        this.explosion.y = this.bottomBomb.y - (this.bottomBomb.height*4/2 - 16*4);
+        this.explosion.visible = true;
+        this.bottomBomb.visible = false;
+        this.explosion.anims.play('bomb_explosion');
+    }
+
+
     getTopBomb(){
         return this.topBomb;
     }
+
 
     getBottomBomb(){
         return this.bottomBomb;

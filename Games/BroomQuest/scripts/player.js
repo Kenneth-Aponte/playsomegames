@@ -27,8 +27,6 @@ export default class Player extends Phaser.GameObjects.Sprite {
                 this.dead = true;
                 this.body.setVelocityY(0);
             }
-        }else{
-            //TODO: some death animation maybe who knows
         }
     }
 }
