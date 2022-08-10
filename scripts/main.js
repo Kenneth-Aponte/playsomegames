@@ -5,12 +5,14 @@ import UIScene from "./UIScene.js";
 
 var config = {
     type: Phaser.AUTO,
-    width: 1280,
+    width: Math.floor(720*(document.getElementById('main').clientWidth/document.getElementById('main').clientHeight)),
     height: 720,
     backgroundColor: '#000000',
     scale : {
-        mode: Phaser.Scale.ENVELOP,
+        mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: Math.floor(720*(document.getElementById('main').clientWidth/document.getElementById('main').clientHeight)),
+        height: 720,
     },
     physics: {
         default: 'arcade',

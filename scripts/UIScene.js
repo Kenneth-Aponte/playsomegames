@@ -5,14 +5,14 @@ export default class UIScene extends Phaser.Scene {
     }
     
     create(){
-        this.height = 720 + this.game.canvas.offsetTop;
-        this.width = 1280 + this.game.canvas.offsetLeft;
+        this.height = this.game.canvas.height;
+        this.width = this.game.canvas.width;
 
         this.OWScene = this.scene.get('OverWorldScene');
-        
+
         //joystick
         if(!this.sys.game.device.os.desktop){
-            this.joystick = this.physics.add.sprite(200,this.height*.7, 'joystick').setScale(8).setAlpha(0.6);
+            this.joystick = this.physics.add.sprite(this.width*0.15,this.height*0.7, 'joystick').setScale(8).setAlpha(0.6);
             this.joystick.setInteractive();
     
             //joystick animations
@@ -100,5 +100,14 @@ export default class UIScene extends Phaser.Scene {
         }
         
 
+    }
+
+    resize(w, h){
+        this.width = w;
+        this.height = h;
+        if(!this.sys.game.device.os.desktop){
+            this.joystick.x = w*0.15;
+            this.joystick.y = h*0.7;
+        }
     }
 }

@@ -20,7 +20,7 @@ export default class OverWorldScene extends Phaser.Scene {
 
     create(){
         //vars
-        this.input;
+        this.keyboardInput;
         this.joystickInput = {
             left: false,
             right: false,
@@ -65,7 +65,7 @@ export default class OverWorldScene extends Phaser.Scene {
         // this.testingLayer.setCollisionByProperty({collides: true});
         //fix the depth later too
 
-        
+
         //player
         //make a spawn point later
         this.player = this.physics.add.sprite(600,200, 'playerTemp').setSize(14,6).setOffset(1,26);
@@ -112,11 +112,11 @@ export default class OverWorldScene extends Phaser.Scene {
     
     update(time, delta){
         //TODO: add WASD
-        this.input = {
-            left: this.cursors.left.isDown || this.joystickInput.left,
-            right: this.cursors.right.isDown || this.joystickInput.right,
-            up: this.cursors.up.isDown || this.joystickInput.up,
-            down: this.cursors.down.isDown || this.joystickInput.down,
+        this.keyboardInput = {
+            left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A).isDown || this.cursors.left.isDown || this.joystickInput.left,
+            right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D).isDown || this.cursors.right.isDown || this.joystickInput.right,
+            up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W).isDown || this.cursors.up.isDown || this.joystickInput.up,
+            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S).isDown || this.cursors.down.isDown || this.joystickInput.down,
         }
 
         const speed = 50;
@@ -126,31 +126,31 @@ export default class OverWorldScene extends Phaser.Scene {
         this.player.setVelocity(0);
 
         //horizontal movement
-        if(this.input.left){
+        if(this.keyboardInput.left){
             this.player.setVelocityX(-speed);
         }
-        else if(this.input.right){
+        else if(this.keyboardInput.right){
             this.player.setVelocityX(speed);
         }
 
         //vertical movement
-        if(this.input.up){
+        if(this.keyboardInput.up){
             this.player.setVelocityY(-speed);
         }
-        else if(this.input.down){
+        else if(this.keyboardInput.down){
             this.player.setVelocityY(speed);
         }
         
-        if (this.input.left) {
+        if (this.keyboardInput.left) {
             this.player.anims.play('playerLeft', true);
         } 
-        else if (this.input.right) {
+        else if (this.keyboardInput.right) {
             this.player.anims.play('playerRight', true);
         } 
-        else if (this.input.up) {
+        else if (this.keyboardInput.up) {
             this.player.anims.play('playerBack', true);
         } 
-        else if (this.input.down) {
+        else if (this.keyboardInput.down) {
             this.player.anims.play('playerFront', true);
         } 
         else {
@@ -172,6 +172,13 @@ export default class OverWorldScene extends Phaser.Scene {
 
         //normalize to avoid faster speed on diagonal
         this.player.body.velocity.normalize().scale(speed);
+
+        //resizing
+        var expectedW = Math.floor(720*(document.getElementById('main').clientWidth/document.getElementById('main').clientHeight));
+        var expectedH = 720;
+        if(this.game.canvas.width != expectedW || this.game.canvas.height != expectedH){
+            this.resize(expectedW,expectedH);
+        }
     }
 
     resetJoystick(){
@@ -183,5 +190,13 @@ export default class OverWorldScene extends Phaser.Scene {
         }
     }
 
+    resize(w,h){
+        this.scale.updateScale();
+        this.scale.updateBounds();
+        this.scale.setGameSize(w,h);
+        this.cameras.resize(w,h);
+        this.scene.get('UIScene').resize(w, h);//calls the resize method on UIScene
+
+    }
 
 }
