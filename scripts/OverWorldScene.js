@@ -20,13 +20,20 @@ export default class OverWorldScene extends Phaser.Scene {
 
     create(){
         //vars
-        this.keyboardInput;
+        this.userInput = {
+            left: false,
+            right: false,
+            up: false,
+            down: false,
+            interacts: false,
+        }
         this.joystickInput = {
             left: false,
             right: false,
             up: false,
             down: false,
         }
+
 
         //adding the UI scene that runs in parallel with this one
         this.scene.launch('UIScene');
@@ -41,30 +48,34 @@ export default class OverWorldScene extends Phaser.Scene {
         this.belowLayer = this.map.createLayer('BelowPlayer', this.roomTS, 0,0);
         this.wallsLayer = this.map.createLayer('walls', this.roomTS,0,0);
         this.gamesLayer = this.map.createLayer('Games', this.basementTS, 0,0);
-        this.aboveLayer = this.map.createLayer('AbovePlayer', this.basementTS, 0,0);
         this.furnitureLayer = this.map.createLayer('Furniture', [this.basementTS, this.genericTS], 0,0);
         this.collisionsLayer = this.map.createLayer('Collisions', this.basementTS, 0, 0);
         
+        
         this.collisionsLayer.setCollisionByProperty({collides: true});
         this.collisionsLayer.visible = false;
-        this.aboveLayer.setDepth(10);
+        
+        //colliding objects
+        this.collideObjectsGroup = this.physics.add.group();
+        this.collidingObjects = this.map.createFromObjects('objectCollision', {});
 
-        // this.testGroup = this.add.group();
-        //testing
-        // this.objectsGroup = this.map.createFromObjects('objectTest',[{
-        //     gid: 9016,
-        //     classType: movingObject,
-        // },{
-        //     id: 11,
-        //     classType: movingObject,
-        // }]);
+        this.collidingObjects.forEach((object) => {
+            this.collideObjectsGroup.add(object);
+            object.setY(object.y + object.body.height);
+            object.body.setImmovable(true);
+            object.visible = false;
+        });
 
-        // this.objectLayer = this.map.getLayer('objectTest');
-        // this.objectLayer.setCollisionByProperty({collides: true});
-        // console.log(this.objectLayer);
-        // this.testingLayer.setCollisionByProperty({collides: true});
-        //fix the depth later too
+        //interactive objects
+        this.interactiveObjectsGroup = this.physics.add.group();
+        this.interactiveObjects = this.map.createFromObjects('objectInteractive', {});
 
+        this.interactiveObjects.forEach((object) => {
+            this.interactiveObjectsGroup.add(object);
+            object.setY(object.y + object.body.height);
+            object.body.setImmovable(true);
+            object.visible = false;
+        });
 
         //player
         //make a spawn point later
@@ -103,7 +114,11 @@ export default class OverWorldScene extends Phaser.Scene {
     
 
         //collisions
-        this.physics.add.collider(this.player,this.collisionsLayer);//this will be just the walls layer later
+        this.physics.add.collider(this.player, this.collisionsLayer);
+        this.physics.add.collider(this.player, this.collideObjectsGroup);
+        
+        //overlaps
+        this.physics.add.overlap(this.player, this.interactiveObjectsGroup, this.playerInteracts, null, this);
 
         //controls
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -112,11 +127,12 @@ export default class OverWorldScene extends Phaser.Scene {
     
     update(time, delta){
         //TODO: add WASD
-        this.keyboardInput = {
+        this.userInput = {
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A).isDown || this.cursors.left.isDown || this.joystickInput.left,
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D).isDown || this.cursors.right.isDown || this.joystickInput.right,
             up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W).isDown || this.cursors.up.isDown || this.joystickInput.up,
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S).isDown || this.cursors.down.isDown || this.joystickInput.down,
+            interacts: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).isDown
         }
 
         const speed = 50;
@@ -126,31 +142,31 @@ export default class OverWorldScene extends Phaser.Scene {
         this.player.setVelocity(0);
 
         //horizontal movement
-        if(this.keyboardInput.left){
+        if(this.userInput.left){
             this.player.setVelocityX(-speed);
         }
-        else if(this.keyboardInput.right){
+        else if(this.userInput.right){
             this.player.setVelocityX(speed);
         }
 
         //vertical movement
-        if(this.keyboardInput.up){
+        if(this.userInput.up){
             this.player.setVelocityY(-speed);
         }
-        else if(this.keyboardInput.down){
+        else if(this.userInput.down){
             this.player.setVelocityY(speed);
         }
         
-        if (this.keyboardInput.left) {
+        if (this.userInput.left) {
             this.player.anims.play('playerLeft', true);
         } 
-        else if (this.keyboardInput.right) {
+        else if (this.userInput.right) {
             this.player.anims.play('playerRight', true);
         } 
-        else if (this.keyboardInput.up) {
+        else if (this.userInput.up) {
             this.player.anims.play('playerBack', true);
         } 
-        else if (this.keyboardInput.down) {
+        else if (this.userInput.down) {
             this.player.anims.play('playerFront', true);
         } 
         else {
@@ -196,7 +212,12 @@ export default class OverWorldScene extends Phaser.Scene {
         this.scale.setGameSize(w,h);
         this.cameras.resize(w,h);
         this.scene.get('UIScene').resize(w, h);//calls the resize method on UIScene
-
     }
 
+    //collide and overlap calls
+    playerInteracts(player,object){
+        if(this.userInput.interacts){
+            console.log('interacting');
+        }
+    }
 }
