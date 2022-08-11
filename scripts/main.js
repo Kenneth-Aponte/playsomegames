@@ -1,4 +1,4 @@
-import OverWorldScene from "./OverWorldScene.js";
+import GameScene_Main from "./GameScene_Main.js";
 import UIScene from "./UIScene.js";
 
 // screen.orientation.lock('landscape');
@@ -27,7 +27,7 @@ var config = {
     },
     pixelArt: true,
     parent: 'main',
-    scene: [OverWorldScene, UIScene],//TODO: Have a boot scene and stuff before the actual game
+    scene: [GameScene_Main, UIScene],//TODO: Have a boot scene and stuff before the actual game
 };
 
 new Phaser.Game(config);

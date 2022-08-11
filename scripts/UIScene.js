@@ -8,7 +8,7 @@ export default class UIScene extends Phaser.Scene {
         this.height = this.game.canvas.height;
         this.width = this.game.canvas.width;
 
-        this.OWScene = this.scene.get('OverWorldScene');
+        this.OWScene = this.scene.get('GameScene_Main');
 
         //joystick
         if(!this.sys.game.device.os.desktop){

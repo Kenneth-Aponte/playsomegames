@@ -1,8 +1,8 @@
 // import movingObject from "./movingObject.js";
 
-export default class OverWorldScene extends Phaser.Scene {
+export default class GameScene_Main extends Phaser.Scene {
     constructor(){
-        super('OverWorldScene')
+        super('GameScene_Main')
     }
 
     preload(){
