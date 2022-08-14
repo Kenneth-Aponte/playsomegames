@@ -1,7 +1,6 @@
-import GameScene_Main from "./GameScene_Main.js";
-import UIScene from "./UIScene.js";
-
-// screen.orientation.lock('landscape');
+import BootScene from "./scenes/BootScene.js";
+import ArcadeScene from "./scenes/ArcadeScene.js";
+import UIScene from "./scenes/UIScene.js";
 
 var config = {
     type: Phaser.AUTO,
@@ -25,9 +24,12 @@ var config = {
         target: 60,
         forceSetTimeOut: true,
     },
+    input :{
+		activePointers: 4,
+	  },
     pixelArt: true,
     parent: 'main',
-    scene: [GameScene_Main, UIScene],//TODO: Have a boot scene and stuff before the actual game
+    scene: [BootScene, ArcadeScene, UIScene],//TODO: Have a boot scene and stuff before the actual game
 };
 
 new Phaser.Game(config);
