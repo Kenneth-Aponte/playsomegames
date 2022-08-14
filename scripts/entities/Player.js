@@ -12,7 +12,6 @@ export default class Player extends Phaser.GameObjects.Sprite{
         this.anims.play('playerFrontIdle');
     }
 
-    
     update(time, delta, userInput){
 
         const speed = 50;

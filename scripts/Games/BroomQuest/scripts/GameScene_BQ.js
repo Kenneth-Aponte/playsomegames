@@ -1,9 +1,9 @@
 import Player from "./player.js";
 import BombPair from "./bombPair.js";
 
-export default class GameScene extends Phaser.Scene {
+export default class GameScene_BQ extends Phaser.Scene {
     constructor(){
-        super('GameScene');
+        super('GameScene_BQ');
 
         //vars
         this.gameStarted = false;
@@ -138,8 +138,7 @@ export default class GameScene extends Phaser.Scene {
             });
             if(!this.nextSceneCalled){
                 setTimeout(() => {
-                    this.scene.stop('GameOverScene');
-                    this.scene.start('GameOverScene', this.score.toString());
+                    this.scene.start('GameOverScene_BQ', this.score.toString());
                 }, 2000);
                 this.nextSceneCalled = true;
             }

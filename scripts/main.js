@@ -2,6 +2,10 @@ import BootScene from "./scenes/BootScene.js";
 import ArcadeScene from "./scenes/ArcadeScene.js";
 import UIScene from "./scenes/UIScene.js";
 
+import MenuScene_BQ from "./Games/BroomQuest/scripts/MenuScene_BQ.js";
+import GameScene_BQ from "./Games/BroomQuest/scripts/GameScene_BQ.js";
+import GameOverScene_BQ from "./Games/BroomQuest/scripts/GameOverScene_BQ.js";
+
 var config = {
     type: Phaser.AUTO,
     width: Math.floor(720*(document.getElementById('main').clientWidth/document.getElementById('main').clientHeight)),
@@ -9,9 +13,9 @@ var config = {
     backgroundColor: '#000000',
     scale : {
         mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: Math.floor(720*(document.getElementById('main').clientWidth/document.getElementById('main').clientHeight)),
-        height: 720,
+        // autoCenter: Phaser.Scale.CENTER_BOTH,
+        // width: Math.floor(720*(document.getElementById('main').clientWidth/document.getElementById('main').clientHeight)),
+        // height: 720,
     },
     physics: {
         default: 'arcade',
@@ -29,7 +33,7 @@ var config = {
 	  },
     pixelArt: true,
     parent: 'main',
-    scene: [BootScene, ArcadeScene, UIScene],//TODO: Have a boot scene and stuff before the actual game
+    scene: [BootScene, ArcadeScene, UIScene, MenuScene_BQ, GameScene_BQ, GameOverScene_BQ],
 };
 
 new Phaser.Game(config);

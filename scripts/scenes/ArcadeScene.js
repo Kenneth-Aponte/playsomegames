@@ -24,7 +24,7 @@ export default class GameScene_Main extends Phaser.Scene {
         }
 
         //other vars
-        this.gameNames = ['Space Survival', 'Broom Quest'];
+        this.gameNames = ['Space Survival', 'MenuScene_BQ', 'meh'];
         
         //adding the UI scene that runs in parallel with this one
         this.scene.launch('UIScene');
@@ -202,8 +202,9 @@ export default class GameScene_Main extends Phaser.Scene {
     playerInteracts(player,object){
         if(this.userInput.interacts){
             if(object.data.list.interaction.startsWith('launch-game')){
-                console.log(object.data.list.interaction.charAt(12));
-                //starts the scene for the other game 
+                // console.log(object.data.list.interaction.charAt(12));
+                this.scene.start(this.gameNames[1]);//temp
+                this.scene.stop('UIScene');
             }
             this.userInput.interacts = false
             this.mobileInput.A_Button = false;
