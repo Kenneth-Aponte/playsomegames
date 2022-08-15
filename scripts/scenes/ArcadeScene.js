@@ -203,7 +203,7 @@ export default class GameScene_Main extends Phaser.Scene {
         if(this.userInput.interacts){
             if(object.data.list.interaction.startsWith('launch-game')){
                 // console.log(object.data.list.interaction.charAt(12));
-                this.scene.start(this.gameNames[1]);//temp
+                this.scene.switch(this.gameNames[1]);//temp
                 this.scene.stop('UIScene');
             }
             this.userInput.interacts = false

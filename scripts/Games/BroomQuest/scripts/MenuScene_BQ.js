@@ -5,8 +5,8 @@ export default class MenuScene extends Phaser.Scene {
         this.witch;
         this.witchDir = "R";
         //buttons
-        this.startButtonText;
-        this.startButton;
+        this.startButtonText, this.exitButtonText;
+        this.startButton, this.exitButton;
         //text
         this.gameNameText;
         this.introMusic;
@@ -23,9 +23,10 @@ export default class MenuScene extends Phaser.Scene {
         this.add.image(640,-180,'layer1').setScale(4).setOrigin(0.5,0.5);
         
         //Buttons
+
         //start button
-        this.startButton = this.physics.add.sprite(640,484,'button1').setScale(10);
-        this.startButtonText = this.add.text(640,480, 'PLAY', { fontFamily: 'editundo', fontSize: '80px', color: '#d9d9d9'}).setOrigin(0.5,0.5).setResolution(5);
+        this.startButton = this.physics.add.sprite(450,484,'button1').setScale(10);
+        this.startButtonText = this.add.text(450,480, 'PLAY', { fontFamily: 'editundo', fontSize: '80px', color: '#d9d9d9'}).setOrigin(0.5,0.5).setResolution(5);
         this.startButton.setInteractive();
 
         //button animations
@@ -55,6 +56,30 @@ export default class MenuScene extends Phaser.Scene {
             this.startButton.anims.play('rest');
             this.startGame();
         });
+
+        //exit button
+        this.exitButton = this.physics.add.sprite(830, 484, 'button1').setScale(10); 
+        this.exitButtonText = this.add.text(830,480, 'EXIT', { fontFamily: 'editundo', fontSize: '80px', color: '#d9d9d9'}).setOrigin(0.5,0.5).setResolution(5);
+        this.exitButton.setInteractive();
+
+        //exit button events
+        this.exitButton.on('pointerover', () => {
+            this.exitButton.setTint('0xdddddd');
+            this.exitButtonText.setTint('0xdddddd');
+        });
+        this.exitButton.on('pointerout', () => {
+            this.exitButton.setTint('0xffffff');
+            this.exitButtonText.setTint('0xffffff');
+        });
+        this.exitButton.on('pointerdown', () => {
+            this.exitButton.anims.play('active');
+        });
+        this.exitButton.on('pointerup', () => {
+            //changes to the next state
+            this.exitButton.anims.play('rest');
+            this.exitGame();
+        });
+
 
         //text
         this.gameNameText = this.add.text(640,200,'BROOM QUEST', { fontFamily: 'editundo', fontSize: '180px', color: '#d9d9d9'}).setOrigin(0.5,0).setResolution(10);
@@ -133,6 +158,13 @@ export default class MenuScene extends Phaser.Scene {
     startGame(){
         this.introMusic.stop();
         this.scene.start('GameScene_BQ');
+    }
+
+    exitGame(){
+        this.introMusic.stop();
+        this.scene.stop('MenuScene_BQ');
+        this.scene.run('ArcadeScene');
+        this.scene.start('UIScene');
     }
 
 
