@@ -39,8 +39,34 @@ export default class BootScene extends Phaser.Scene {
 
         this.load.tilemapTiledJSON('map', './assets/tilemaps/mainTempPSG.tmj');
 
+        //Space Survival
+        this.load.image('star','../../assets/SpaceSurvival_assets/star.png');
+        this.load.image('sideRock','../../assets/SpaceSurvival_assets/clouds.png');
+        this.load.image('pBullet','../../assets/SpaceSurvival_assets/pBullet.png');
+        this.load.image('e2Bullet','../../assets/SpaceSurvival_assets/e2Bullet.png');
+        this.load.image('shipGUI', '../../assets/SpaceSurvival_assets/shipGUI.png');
+        this.load.image('enemies3', '../../assets/SpaceSurvival_assets/enemy3.png');
+        
+        this.load.spritesheet('shipNT','../../assets/SpaceSurvival_assets/shipST.png', {frameWidth: 16, frameHeight: 14});
+        this.load.spritesheet('shipST','../../assets/SpaceSurvival_assets/shipST.png', {frameWidth: 16, frameHeight: 21});
+        this.load.spritesheet('shipBT','../../assets/SpaceSurvival_assets/shipBT.png', {frameWidth: 16, frameHeight: 22});
+        this.load.spritesheet('enemies1','../../assets/SpaceSurvival_assets/enemy1.png', {frameWidth: 16, frameHeight: 13});
+        this.load.spritesheet('enemies2','../../assets/SpaceSurvival_assets/enemy2.png', {frameWidth: 16, frameHeight: 16});
+        this.load.spritesheet('explosionPlayer','../../assets/SpaceSurvival_assets/playerExplosion.png', {frameWidth: 16, frameHeight: 16});
+    
+        this.load.audio('fire1','../../assets/SpaceSurvival_assets/LaserFire1.wav');
+        this.load.audio('fire2','../../assets/SpaceSurvival_assets/LaserFire2.wav');
+        this.load.audio('introSS','../../assets/SpaceSurvival_assets/intro_cut.mp3');
+        this.load.audio('explosion1', '../../assets/SpaceSurvival_assets/hurt.wav');
+        this.load.audio('explosion2', '../../assets/SpaceSurvival_assets/Explosion2.wav');
+        this.load.audio('explosion3', '../../assets/SpaceSurvival_assets/Explosion3.wav');
+        this.load.audio('respawn', '../../assets/SpaceSurvival_assets/VictorySmall.wav');
+        this.load.audio('newRound', '../../assets/SpaceSurvival_assets/VictoryBig.wav');
+        this.load.audio('gameOver', '../../assets/SpaceSurvival_assets/GameOver.wav');
+        this.load.audio('moveSound', '../../assets/SpaceSurvival_assets/enemy2move.wav') 
+        this.load.audio('moveSound2', '../../assets/SpaceSurvival_assets/enemy3move.wav') 
 
-        //BroomQuest
+        //Broom Quest
         this.load.image('layer9', '../../assets/BroomQuest_assets/City Backround Layer9.png');
         this.load.image('layer8', '../../assets/BroomQuest_assets/City Backround Layer8.png');
         this.load.image('layer7', '../../assets/BroomQuest_assets/City Backround Layer7.png');
@@ -58,7 +84,7 @@ export default class BootScene extends Phaser.Scene {
         this.load.spritesheet('bombB', '../../assets/BroomQuest_assets/bomb_B.png', {frameWidth: 24, frameHeight: 256});
         this.load.spritesheet('explosion', '../../assets/BroomQuest_assets/explosion.png',{frameWidth: 16,frameHeight: 16});
 
-        this.load.audio('intro', '../../assets/BroomQuest_assets/intro_music.wav');
+        this.load.audio('introBQ', '../../assets/BroomQuest_assets/intro_music.wav');
         this.load.audio('start', '../../assets/BroomQuest_assets/secret.wav');
         this.load.audio('bird', '../../assets/BroomQuest_assets/bird.wav');
         this.load.audio('game_over', '../../assets/BroomQuest_assets/Game-Over.wav');
@@ -67,10 +93,12 @@ export default class BootScene extends Phaser.Scene {
     }
 
     async loadFont(){
-        const font = new FontFace('editundo', 'url(https://fonts.cdnfonts.com/s/29055/editundo.woff)');
-        //load the one from space survival later too
-        await font.load();
-        document.fonts.add(font);
+        const font1 = new FontFace('editundo', 'url(https://fonts.cdnfonts.com/s/29055/editundo.woff)');
+        const font2 = new FontFace('serious1', 'url(https://fonts.cdnfonts.com/s/7418/Serious-1.woff)');
+        await font1.load();
+        await font2.load();
+        document.fonts.add(font1);
+        document.fonts.add(font2);
         document.body.classList.add('fonts-loaded');
     }
 }

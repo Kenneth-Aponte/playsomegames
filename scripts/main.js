@@ -5,6 +5,7 @@ import UIScene from "./scenes/UIScene.js";
 import MenuScene_BQ from "./Games/BroomQuest/scripts/MenuScene_BQ.js";
 import GameScene_BQ from "./Games/BroomQuest/scripts/GameScene_BQ.js";
 import GameOverScene_BQ from "./Games/BroomQuest/scripts/GameOverScene_BQ.js";
+import GameScene_SS from "./Games/SpaceSurvival/scripts/GameScene_SS.js";
 
 var config = {
     type: Phaser.AUTO,
@@ -33,7 +34,7 @@ var config = {
 	  },
     pixelArt: true,
     parent: 'main',
-    scene: [BootScene, ArcadeScene, UIScene, MenuScene_BQ, GameScene_BQ, GameOverScene_BQ],
+    scene: [BootScene, ArcadeScene, UIScene, GameScene_SS, MenuScene_BQ, GameScene_BQ, GameOverScene_BQ],
 };
 
 new Phaser.Game(config);

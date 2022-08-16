@@ -125,7 +125,7 @@ export default class MenuScene extends Phaser.Scene {
         this.witch.anims.play('right');
         this.witch.setVelocityX(200);
 
-        this.introMusic = this.sound.add('intro');
+        this.introMusic = this.sound.add('introBQ');
         this.introMusic.loop = true;
         this.introMusic.play();
     }
