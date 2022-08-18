@@ -10,9 +10,10 @@ export default class BootScene extends Phaser.Scene {
         
         //fonts
         this.loadFont();
-        
-        this.loadingText = this.add.text(50,this.sys.game.config.height - 50, 'Loading...', { fontFamily: 'arial', fontSize: '20px', color: '#ffffff'}).setOrigin(0.5,0.5);
-        
+
+        this.loadingText = this.add.text(50,this.sys.game.config.height - 50, 'Loading...', { fontFamily: 'arial', fontSize: '20px', color: '#ffffff'}).setOrigin(0,0.5);
+        this.percentageText = this.add.text(this.sys.game.config.width-50,this.sys.game.config.height - 50, '0', { fontFamily: 'arial', fontSize: '20px', color: '#ffffff'}).setOrigin(1,0.5);
+
         this.loadingTextInterval = setInterval(() => {
             if(this.loadingText.text == 'Loading...'){
                 this.loadingText.setText('Loading..');
@@ -26,6 +27,7 @@ export default class BootScene extends Phaser.Scene {
             g.clear();
             g.fillStyle(0xffffff, 1);
             g.fillRect(0, this.sys.game.config.height - 30, this.sys.game.config.width * value, 10);
+            this.percentageText.setText(Phaser.Math.RoundTo(value*100,0) + '%');
         });
 
         //done hence, start the initial scene which is temporarily
