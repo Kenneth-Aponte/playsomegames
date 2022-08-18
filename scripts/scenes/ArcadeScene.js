@@ -88,7 +88,7 @@ export default class GameScene_Main extends Phaser.Scene {
         
         //player 
         //make a spawn point later
-        this.player = new Player(this, 400, 200, 'playerTemp');
+        this.player = new Player(this, 400, 200, 'playerMain');
         
         //camera
         this.camera = this.cameras.main;
@@ -148,25 +148,25 @@ export default class GameScene_Main extends Phaser.Scene {
         //player running
         this.anims.create({
             key: 'playerRight',
-            frames: this.anims.generateFrameNumbers('playerTemp', {start: 0, end: 5}),
+            frames: this.anims.generateFrameNumbers('playerMain', {start: 0, end: 5}),
             frameRate: 14,
             repeat: -1,
         });
         this.anims.create({
             key: 'playerBack',
-            frames: this.anims.generateFrameNumbers('playerTemp', {start: 6, end: 11}),
+            frames: this.anims.generateFrameNumbers('playerMain', {start: 6, end: 11}),
             frameRate: 14,
             repeat: -1,
         });
         this.anims.create({
             key: 'playerLeft',
-            frames: this.anims.generateFrameNumbers('playerTemp', {start: 12, end: 17}),
+            frames: this.anims.generateFrameNumbers('playerMain', {start: 12, end: 17}),
             frameRate: 14,
             repeat: -1,
         });
         this.anims.create({
             key: 'playerFront',
-            frames: this.anims.generateFrameNumbers('playerTemp', {start: 18, end: 23}),
+            frames: this.anims.generateFrameNumbers('playerMain', {start: 18, end: 23}),
             frameRate: 14,
             repeat: -1,
         });
@@ -174,25 +174,25 @@ export default class GameScene_Main extends Phaser.Scene {
         //player idle
         this.anims.create({
             key: 'playerRightIdle',
-            frames: this.anims.generateFrameNumbers('playerTempIdle', {start: 0, end: 5}),
+            frames: this.anims.generateFrameNumbers('playerMainIdle', {start: 0, end: 5}),
             frameRate: 10,
             repeat: -1,
         });
         this.anims.create({
             key: 'playerBackIdle',
-            frames: this.anims.generateFrameNumbers('playerTempIdle', {start: 6, end: 11}),
+            frames: this.anims.generateFrameNumbers('playerMainIdle', {start: 6, end: 11}),
             frameRate: 10,
             repeat: -1,
         });
         this.anims.create({
             key: 'playerLeftIdle',
-            frames: this.anims.generateFrameNumbers('playerTempIdle', {start: 12, end: 17}),
+            frames: this.anims.generateFrameNumbers('playerMainIdle', {start: 12, end: 17}),
             frameRate: 10,
             repeat: -1,
         });
         this.anims.create({
             key: 'playerFrontIdle',
-            frames: this.anims.generateFrameNumbers('playerTempIdle', {start: 18, end: 23}),
+            frames: this.anims.generateFrameNumbers('playerMainIdle', {start: 18, end: 23}),
             frameRate: 10,
             repeat: -1,
         });
