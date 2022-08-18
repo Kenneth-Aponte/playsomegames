@@ -1,6 +1,9 @@
 export default class MenuScene extends Phaser.Scene {
     constructor(){
         super('MenuScene_BQ');    
+    }
+
+    create(){
         //moving witch
         this.witch;
         this.witchDir = "R";
@@ -10,10 +13,6 @@ export default class MenuScene extends Phaser.Scene {
         //text
         this.gameNameText;
         this.introMusic;
-    }
-
-
-    create(){
         this.resize(1280,720);
         //static images --> background
         this.add.image(640,0,'layer9').setScale(4).setOrigin(0.5,0.5);

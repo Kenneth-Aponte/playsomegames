@@ -4,6 +4,10 @@ export default class GameScene_SS extends Phaser.Scene {
     }
     
     create(){
+        //adding the UI scene that runs in parallel with this one
+        this.scene.launch('UIScene');
+        this.scene.get('UIScene').OWScene = this;
+
         //player
         this.player;
         this.playerBullets;
@@ -23,7 +27,21 @@ export default class GameScene_SS extends Phaser.Scene {
         this.enemies1, this.enemies2, this.enemies3;
         this.e2Bullets;
         //input keys
-        this.keyW, this.keyA, this.keyS, this.keyD, this.cursors, this.keySpace, this.keyEnter, this.keyC;
+        this.userInput = {
+            left: false,
+            right: false,
+            up: false,
+            down: false,
+            interacts: false,
+        }
+        this.mobileInput = {
+            left: false,
+            right: false,
+            up: false,
+            down: false,
+            A_Button: false,
+        }
+        this.cursors, this.keyEnter, this.keyC;
         //text
         this.FPS, this.scoreText, this.roundText, this.middleScreenText, this.playerLivesText, this.gameOverBottomText, this.accuracyText, this.showControlsText, this.controlsText;
         //score et. al.
@@ -172,16 +190,11 @@ export default class GameScene_SS extends Phaser.Scene {
         this.physics.add.collider(this.player, this.enemies3, this.playerHit, null,this);
     
         //inputs 
-        this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     
         this.keyC = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
     
         this.cursors = this.input.keyboard.createCursorKeys();
     
-        this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     
         //text
@@ -220,13 +233,21 @@ export default class GameScene_SS extends Phaser.Scene {
     
 
     update(){
+        this.userInput = {
+            left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A).isDown || this.cursors.left.isDown || this.mobileInput.left,
+            right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D).isDown || this.cursors.right.isDown || this.mobileInput.right,
+            up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W).isDown || this.cursors.up.isDown || this.mobileInput.up,
+            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S).isDown || this.cursors.down.isDown || this.mobileInput.down,
+            fire: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).isDown || this.mobileInput.A_Button,
+        }
+
         if(this.gameStarted && !this.playerDead){
             //movement vertical
-            if((this.keyW.isDown || this.cursors.up.isDown) && !this.keyA.isDown && !this.cursors.left.isDown && !this.keyD.isDown && !this.cursors.right.isDown){
+            if(this.userInput.up && !this.userInput.left && !this.userInput.right){
                 this.player.anims.play('centerBT', true);
                 this.player.setVelocityY(-500);
             }
-            else if((this.keyS.isDown || this.cursors.down.isDown) && !this.keyA.isDown && !this.cursors.left.isDown && !this.keyD.isDown && !this.cursors.right.isDown){
+            else if(this.userInput.down && !this.userInput.left && !this.userInput.right){
                 this.player.anims.play('centerNT', true);
                 this.player.setVelocityY(500);
             }
@@ -236,12 +257,12 @@ export default class GameScene_SS extends Phaser.Scene {
             }
 
             //movement horizontal
-            if(this.keyA.isDown || this.cursors.left.isDown){
-                if(this.keyW.isDown || this.cursors.up.isDown){
+            if(this.userInput.left){
+                if(this.userInput.up){
                     this.player.anims.play('leftBT', true);
                     this.player.setVelocity(-353,-353);
                 }
-                else if(this.keyS.isDown || this.cursors.down.isDown){
+                else if(this.userInput.down){
                     this.player.anims.play('leftNT', true);
                     this.player.setVelocity(-353,353);
                 }else{
@@ -249,12 +270,12 @@ export default class GameScene_SS extends Phaser.Scene {
                     this.player.setVelocityX(-500);
                 }
             }
-            else if(this.keyD.isDown || this.cursors.right.isDown){
-                if(this.keyW.isDown || this.cursors.up.isDown){
+            else if(this.userInput.right){
+                if(this.userInput.up){
                     this.player.anims.play('rightBT', true);
                     this.player.setVelocity(353,-353);
                 }
-                else if(this.keyS.isDown || this.cursors.down.isDown){
+                else if(this.userInput.down){
                     this.player.anims.play('rightNT', true);
                     this.player.setVelocity(353,353);
                 }else{
@@ -270,7 +291,7 @@ export default class GameScene_SS extends Phaser.Scene {
             if(this.fireTime > 0){
                 this.fireTime--;
             }
-            else if(this.keySpace.isDown && !this.nextRoundCalled){
+            else if(this.userInput.fire && !this.nextRoundCalled){
                 this.fire1.play();
                 this.fireTime = this.MAXFIRERATE;
                 this.playerBullets.create(this.player.x+40, this.player.y, 'pBullet').setVelocityY(-1000).setScale(3);
@@ -390,12 +411,16 @@ export default class GameScene_SS extends Phaser.Scene {
 
         }else if(!this.playerDead){
             if(this.middleScreenText.text == ''){
-                this.middleScreenText.setText('PRESS ENTER TO START!');
+                if(this.sys.game.device.os.desktop){
+                    this.middleScreenText.setText('PRESS ENTER TO START!');
+                }else{
+                    this.middleScreenText.setText('PRESS A TO START!');
+                }
                 this.flashInt = setInterval(() => {
                     this.middleScreenText.visible = !this.middleScreenText.visible;
                 }, 500);
             }
-            if(this.keyEnter.isDown && !this.nextRoundCalled){
+            if((this.keyEnter.isDown || this.mobileInput.A_Button) && !this.nextRoundCalled){
                 //initial function calls
                 this.introSong.play();
                 this.gameStart_Spawn();
@@ -417,9 +442,10 @@ export default class GameScene_SS extends Phaser.Scene {
             }
         }
         else if(this.gameOver){
-            if(this.keyEnter.isDown){
+            if(this.keyEnter.isDown || this.mobileInput.A_Button){
                 this.gameOverSound.stop();
                 this.scene.run('ArcadeScene');
+                this.scene.get('UIScene').OWScene = this.scene.get('ArcadeScene');
                 this.scene.start('UIScene');
             }
         }
@@ -697,7 +723,12 @@ export default class GameScene_SS extends Phaser.Scene {
                     this.gameOverBottomText.setOrigin(0.5,0);
                     this.gameOverBottomText.x = this.middleScreenText.x;
                     this.gameOverBottomText.y = 680;
-                    this.gameOverBottomText.setText('PRESS ENTER TO EXIT!');
+                    if(this.sys.game.device.os.desktop){
+                        this.gameOverBottomText.setText('PRESS ENTER TO EXIT');
+                    }else{
+                        this.gameOverBottomText.y-=40;
+                        this.gameOverBottomText.setText('PRESS A TO EXIT');
+                    }
                     
                     setInterval(() =>{
                         this.gameOverBottomText.visible = !this.gameOverBottomText.visible; 
@@ -711,6 +742,13 @@ export default class GameScene_SS extends Phaser.Scene {
     }
 
 
+    
+    resetMobile(){
+        this.mobileInput.left = false;
+        this.mobileInput.right = false;
+        this.mobileInput.up = false;
+        this.mobileInput.down = false;
+    }
 
     resize(w,h){
         this.scale.setGameSize(w,h);

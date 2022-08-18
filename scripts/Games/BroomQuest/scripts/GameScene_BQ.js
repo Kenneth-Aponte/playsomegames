@@ -4,7 +4,9 @@ import BombPair from "./bombPair.js";
 export default class GameScene_BQ extends Phaser.Scene {
     constructor(){
         super('GameScene_BQ');
-
+    }
+ 
+    create(){        
         //vars
         this.gameStarted = false;
         this.pointerDown = false;
@@ -20,10 +22,6 @@ export default class GameScene_BQ extends Phaser.Scene {
         this.startSound;
         this.birdSound;
         this.explosionSound;
-    }
-
-    
-    create(){
         //background
         this.add.image(640,0,'layer9').setScale(4).setOrigin(0.5,0.5);
         this.add.image(640,400,'layer6').setScale(4).setOrigin(0.5,0.5);
@@ -132,12 +130,12 @@ export default class GameScene_BQ extends Phaser.Scene {
             //dead witch animation
             this.player.rotation += 0.5;
             this.bombPairs.forEach((sP2) =>{
-                
                 sP2.getTopBomb().body.setVelocityX(0);
                 sP2.getBottomBomb().body.setVelocityX(0);
             });
             if(!this.nextSceneCalled){
                 setTimeout(() => {
+                    this.player.destroy();
                     this.scene.start('GameOverScene_BQ', this.score.toString());
                 }, 2000);
                 this.nextSceneCalled = true;

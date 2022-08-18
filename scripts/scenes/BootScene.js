@@ -33,11 +33,16 @@ export default class BootScene extends Phaser.Scene {
         this.load.image('RoomBuilder', './assets/tilesets/Room_Builder_16x16-extruded.png');
         this.load.image('Basement', './assets/tilesets/14_Basement_16x16.png');
         this.load.image('Generic', './assets/tilesets/1_Generic_16x16.png');
-
-        this.load.spritesheet('joystick', './assets/images/Joystick1.png', {frameWidth: 20, frameHeight: 20});
-        this.load.spritesheet('button_A', './assets/images/A_Button.png', {frameWidth: 16, frameHeight: 16});
-
+        
+        
+        
         this.load.tilemapTiledJSON('map', './assets/tilemaps/mainTempPSG.tmj');
+        
+        //UI
+        this.load.image('joystick_BG', './assets/images/Joystick.png');
+        this.load.image('joystick_FG', './assets/images/LargeHandleFilled.png');
+        
+        this.load.spritesheet('button_A', './assets/images/A_Button.png', {frameWidth: 16, frameHeight: 16});
 
         //Space Survival
         this.load.image('star','../../assets/SpaceSurvival_assets/star.png');

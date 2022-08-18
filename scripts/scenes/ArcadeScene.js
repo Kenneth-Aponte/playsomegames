@@ -28,6 +28,7 @@ export default class GameScene_Main extends Phaser.Scene {
         
         //adding the UI scene that runs in parallel with this one
         this.scene.launch('UIScene');
+        this.scene.get('UIScene').OWScene = this;
         
         //animations
         this.setUpAnimations();

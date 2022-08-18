@@ -3,6 +3,15 @@ import GameScene_BQ from "./GameScene_BQ.js";
 export default class GameOverScene_BQ extends Phaser.Scene {
     constructor(){
         super('GameOverScene_BQ');
+    }
+
+    init(data){
+        //passing the score from the prev scene (GameScene_BQ)
+        this.score = data;
+    }
+
+
+    create(){        
         //buttons
         this.menuButtonText;
         this.menuButton;
@@ -13,15 +22,6 @@ export default class GameOverScene_BQ extends Phaser.Scene {
         this.scoreText;
 
         this.gameOverMusic;
-    }
-
-    init(data){
-        //passing the score from the prev scene (GameScene_BQ)
-        this.score = data;
-    }
-
-
-    create(){
         //reset the game scene (apparently this is the only way to do a proper restart)
         this.scene.remove('GameScene_BQ');
         this.scene.add('GameScene_BQ', GameScene_BQ);

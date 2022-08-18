@@ -34,7 +34,7 @@ var config = {
 	  },
     pixelArt: true,
     parent: 'main',
-    scene: [BootScene, ArcadeScene, UIScene, GameScene_SS, MenuScene_BQ, GameScene_BQ, GameOverScene_BQ],
+    scene: [BootScene, ArcadeScene, GameScene_SS, MenuScene_BQ, GameScene_BQ, GameOverScene_BQ, UIScene],
 };
 
 new Phaser.Game(config);
