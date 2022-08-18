@@ -10,25 +10,34 @@ export default class BootScene extends Phaser.Scene {
         
         //fonts
         this.loadFont();
+        
+        this.loadingText = this.add.text(50,this.sys.game.config.height - 50, 'Loading...', { fontFamily: 'arial', fontSize: '20px', color: '#ffffff'}).setOrigin(0.5,0.5);
+        
+        this.loadingTextInterval = setInterval(() => {
+            if(this.loadingText.text == 'Loading...'){
+                this.loadingText.setText('Loading..');
+            }else{
+                this.loadingText.setText('Loading...');
+            }
+        }, 500); // 500ms
 
         //loading bar
         this.load.on('progress', (value) => {
             g.clear();
             g.fillStyle(0xffffff, 1);
-            g.fillRect(0, this.sys.game.config.height / 2, this.sys.game.config.width * value, 60);
-            // console.log(value);
+            g.fillRect(0, this.sys.game.config.height - 30, this.sys.game.config.width * value, 10);
         });
 
         //done hence, start the initial scene which is temporarily
         this.load.on('complete', () => {
-            //TODO: Animations
+            clearInterval(this.loadingTextInterval);
             g.destroy();
             this.scene.start('ArcadeScene');
         });
 
         //arcade interior
-        this.load.spritesheet('playerTemp', './assets/sprites/Alex_run_16x16.png', {frameWidth: 16, frameHeight: 32});
-        this.load.spritesheet('playerTempIdle', './assets/sprites/Alex_idle_anim_16x16.png', {frameWidth: 16, frameHeight: 32});
+        this.load.spritesheet('playerMain', './assets/sprites/character1_running.png', {frameWidth: 16, frameHeight: 32});
+        this.load.spritesheet('playerMainIdle', './assets/sprites/character1_idle.png', {frameWidth: 16, frameHeight: 32});
 
         this.load.image('RoomBuilder', './assets/tilesets/Room_Builder_16x16-extruded.png');
         this.load.image('Basement', './assets/tilesets/14_Basement_16x16.png');
