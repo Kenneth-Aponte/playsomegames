@@ -7,7 +7,7 @@ export default class BootScene extends Phaser.Scene {
     preload(){
         //progress bar
         const g = this.add.graphics();
-        
+
         //fonts
         this.loadFont();
 
@@ -25,8 +25,12 @@ export default class BootScene extends Phaser.Scene {
         //loading bar
         this.load.on('progress', (value) => {
             g.clear();
+            g.fillStyle(0x172022, 1);
+            g.fillRect(0,0,this.sys.game.config.width, this.sys.game.config.height);
+
             g.fillStyle(0xffffff, 1);
             g.fillRect(0, this.sys.game.config.height - 30, this.sys.game.config.width * value, 10);
+            
             this.percentageText.setText(Phaser.Math.RoundTo(value*100,0) + '%');
         });
 

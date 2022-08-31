@@ -1,25 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>PSG</title>
-    <link rel="shortcut icon" type="image/PNG" href="../../favicon.PNG">
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
-    <style type="text/css">
-        body,html {
-            margin: 0;            
-            padding: env(safe-area-inset);/* fixes notch issue */
-            width: 100vw;
-            height: 100vh;
-            background-color: black;
-        }
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>PSG</title>
+  <link rel="stylesheet" href="styles1.css">
+  <link rel="shortcut icon" type="image/PNG" href="./favicon.PNG">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.cdnfonts.com">
+  <link href="https://fonts.cdnfonts.com/css/serious" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet'>
+  <link href="http://fonts.cdnfonts.com/css/onesize" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://kit.fontawesome.com/8b1c96b377.js" crossorigin="anonymous"></script>
 
-    </style>
 </head>
-<body id="body">
-    <div id="main" style=" width: 100vw; height: 100vh; display: flex; flex-direction: row; justify-content: center; align-items: center;"></div>
-    <script type="module" src="scripts/main.js"></script>
+<body>
+    <div class="navbar">
+        <a href="./" id="logo">PLAYSOMEGAMES</a>
+        <div id="navbar_links">
+          <div style="display: flex; flex-direction: row; align-items: center; ">
+            <i class="fa-solid fa-gamepad fa-lg" style="color: #5478d3; width: 1vh; padding: 0 2vh;"></i>
+            <a href="./wip.html">CONTROLS</a>
+          </div>
+          <div style="display: flex; flex-direction: row; align-items: center; ">
+            <i class="fa-solid fa-circle-info fa-lg" style="color: #5478d3; width: 1vh; padding:0  2vh;"></i>
+            <a href="./wip.html">ABOUTUS</a>
+          </div>
+        </div>
+        <!-- Hamburger menu -->
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="fa fa-bars"></i>
+        </a>
+    </div>
+    
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div class="mainText">
+          <br><br>
+          Notice:<br><br>
+          If you are on mobile please make sure your device is on landscape mode before you start the game. Also, depending on the browser, you have the option to hide the toolbar for a "fullscreen" experience.<br><br>
+          This is a work in progress. Hence, this is currently not the finished product and there will be many updates!
+        </div>
+        <br><br>
+
+        <div style="display: flex; flex-direction: row; ; justify-content: center; align-items: center;">
+          <img src="./Images/character_icon.png" id="charIcon">
+          <a id="playButton" href="/mainGame.html">PLAY</a>
+        </div>
+        
+        <br><br>
+        
+        <div class="mainText">
+          <br><br>
+          For insights on the controls please check out the CONTROLS page.<br><br>
+          To learn more about us please visit the ABOUT US page!<br><br>
+        </div>
+        
+        <br><br><br>
+    </div>
+<!-- <script src="gameSelection.js"></script> -->
+<script>
+  function myFunction() {
+    var links = document.getElementById("navbar_links");
+    if (links.style.display === "block") {
+      links.style.display = "none";
+    } else {
+      links.style.display = "block";
+    }
+  }
+</script>
 </body>
 </html>
