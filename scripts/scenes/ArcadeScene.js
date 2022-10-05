@@ -40,14 +40,18 @@ export default class GameScene_Main extends Phaser.Scene {
         this.roomTS = this.map.addTilesetImage('Room_Builder', 'RoomBuilder',16,16,1,2);
         this.basementTS = this.map.addTilesetImage('Basement', 'Basement');
         this.genericTS = this.map.addTilesetImage('Generic', 'Generic');
+        this.shootingRangeTS = this.map.addTilesetImage('Shooting Range', 'ShootingRange');
         
         //layers
-        this.belowLayer = this.map.createLayer('BelowPlayer', this.roomTS, 0,0);
+        this.belowLayer = this.map.createLayer('BelowPlayer', [this.roomTS, this.genericTS], 0,0);
+        this.shadow_carpetLayer = this.map.createLayer('shadows_and_carpets', this.roomTS, 0, 0);
         this.wallsLayer = this.map.createLayer('walls', this.roomTS,0,0);
         this.gamesLayer = this.map.createLayer('Games', this.basementTS, 0,0);
-        this.aboveLayer = this.map.createLayer('AbovePlayer', this.basementTS, 0, 0);
-        this.furnitureLayer = this.map.createLayer('Furniture', [this.basementTS, this.genericTS], 0,0);
+        this.aboveLayer = this.map.createLayer('AbovePlayer', [this.basementTS,this.genericTS], 0, 0);
+        this.furnitureLayer = this.map.createLayer('Furniture', [this.basementTS, this.genericTS, this.shootingRangeTS], 0,0);
+        this.miscLayer = this.map.createLayer('misc', [this.basementTS, this.shootingRangeTS], 0, 0);
         this.collisionsLayer = this.map.createLayer('Collisions', this.basementTS, 0, 0);
+        
         
         //changes to layers
         this.aboveLayer.setDepth(10);
@@ -77,28 +81,33 @@ export default class GameScene_Main extends Phaser.Scene {
 
         
         this.entityObjectsGroup = this.physics.add.group();
-        this.entityObjects = this.map.createFromObjects('objectEntities', {});//this will just be NPC_Charracter in the future
+        this.entityObjects = this.map.createFromObjects('objectEntities', {});//this will just be NPC_Person in the future
         
         this.entityObjects.forEach((object) => {
+            const facing = object.data.list.facing;
+            const action = object.data.list.action;
             object.destroy();//destroy it as we are making a new one based on its properties with our custom class
-            var newObj = new NPC_Person(this,object.x,object.y)
+            var newObj = new NPC_Person(this,object.x,object.y,facing,action)
             this.entityObjectsGroup.add(newObj);
             newObj.body.setImmovable(true);
         });
         
         //player 
         //make a spawn point later
-        this.player = new Player(this, 400, 200, 'playerMain');
+        this.player = new Player(this, 7*16, 12*16, 'playerMain');
         
         //camera
         this.camera = this.cameras.main;
-        this.camera.zoom = 5;
+        this.camera.zoom = 4;
         this.camera.startFollow(this.player);
     
         //collisions
         this.physics.add.collider(this.player, this.collisionsLayer);
         this.physics.add.collider(this.player, this.collideObjectsGroup);
         this.physics.add.collider(this.player, this.entityObjectsGroup);
+        // this.physics.add.collider(this.entityObjectsGroup, this.collisionsLayer);
+        // this.physics.add.collider(this.entityObjectsGroup, this.collideObjectsGroup);
+        // this.physics.add.collider(this.entityObjectsGroup, this.entityObjectsGroup);
         
         //overlaps
         this.physics.add.overlap(this.player, this.interactiveObjectsGroup, this.playerInteracts, null, this);

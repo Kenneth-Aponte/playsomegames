@@ -12,7 +12,7 @@ export default class MenuScene extends Phaser.Scene {
         this.startButton, this.exitButton;
         //text
         this.gameNameText;
-        this.introMusic;
+        // this.introMusic;
         this.resize(1280,720);
         //static images --> background
         this.add.image(640,0,'layer9').setScale(4).setOrigin(0.5,0.5);
@@ -124,9 +124,9 @@ export default class MenuScene extends Phaser.Scene {
         this.witch.anims.play('right');
         this.witch.setVelocityX(200);
 
-        this.introMusic = this.sound.add('introBQ');
-        this.introMusic.loop = true;
-        this.introMusic.play();
+        // this.introMusic = this.sound.add('introBQ');
+        // this.introMusic.loop = true;
+        // this.introMusic.play();
     }
 
     
@@ -155,12 +155,12 @@ export default class MenuScene extends Phaser.Scene {
 
 
     startGame(){
-        this.introMusic.stop();
+        // this.introMusic.stop();
         this.scene.start('GameScene_BQ');
     }
 
     exitGame(){
-        this.introMusic.stop();
+    //     this.introMusic.stop();
         this.scene.stop('MenuScene_BQ');
         this.scene.run('ArcadeScene');
         this.scene.start('UIScene');

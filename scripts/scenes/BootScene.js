@@ -45,10 +45,19 @@ export default class BootScene extends Phaser.Scene {
         this.load.spritesheet('playerMain', './assets/sprites/character1_running.png', {frameWidth: 16, frameHeight: 32});
         this.load.spritesheet('playerMainIdle', './assets/sprites/character1_idle.png', {frameWidth: 16, frameHeight: 32});
 
+        this.load.spritesheet('character2Idle', './assets/sprites/character2_idle.png', {frameWidth: 16, frameHeight: 32});
+        this.load.spritesheet('character3Idle', './assets/sprites/character3_idle.png', {frameWidth: 16, frameHeight: 32});
+        this.load.spritesheet('character4Idle', './assets/sprites/character4_idle.png', {frameWidth: 16, frameHeight: 32});
+        this.load.spritesheet('character5Idle', './assets/sprites/character5_idle.png', {frameWidth: 16, frameHeight: 32});
+        // this.load.spritesheet('character2Running', './assets/sprites/character2_Running.png', {frameWidth: 16, frameHeight: 32});
+        // this.load.spritesheet('character3Running', './assets/sprites/character3_Running.png', {frameWidth: 16, frameHeight: 32});
+        // this.load.spritesheet('character4Running', './assets/sprites/character4_Running.png', {frameWidth: 16, frameHeight: 32});
+        // this.load.spritesheet('character5Running', './assets/sprites/character5_Running.png', {frameWidth: 16, frameHeight: 32});
+
         this.load.image('RoomBuilder', './assets/tilesets/Room_Builder_16x16-extruded.png');
-        this.load.image('Basement', './assets/tilesets/14_Basement_16x16.png');
-        this.load.image('Generic', './assets/tilesets/1_Generic_16x16.png');
-        
+        this.load.image('Basement', './assets/tilesets/14_Basement_Shadowless.png');
+        this.load.image('Generic', './assets/tilesets/1_Generic_Shadowless.png');
+        this.load.image('ShootingRange', './assets/tilesets/25_Shooting_Range_Shadowless.png');
         
         
         this.load.tilemapTiledJSON('map', './assets/tilemaps/mainTempPSG.tmj');
@@ -104,10 +113,10 @@ export default class BootScene extends Phaser.Scene {
         this.load.spritesheet('bombB', '../../assets/BroomQuest_assets/bomb_B.png', {frameWidth: 24, frameHeight: 256});
         this.load.spritesheet('explosion', '../../assets/BroomQuest_assets/explosion.png',{frameWidth: 16,frameHeight: 16});
 
-        this.load.audio('introBQ', '../../assets/BroomQuest_assets/intro_music.wav');
+        // this.load.audio('introBQ', '../../assets/BroomQuest_assets/intro_music.wav');
         this.load.audio('start', '../../assets/BroomQuest_assets/secret.wav');
         this.load.audio('bird', '../../assets/BroomQuest_assets/bird.wav');
-        this.load.audio('game_over', '../../assets/BroomQuest_assets/Game-Over.wav');
+        // this.load.audio('game_over', '../../assets/BroomQuest_assets/Game-Over.wav');
         this.load.audio('dead_explosion', '../../assets/BroomQuest_assets/ExplosionSound.wav');
 
     }

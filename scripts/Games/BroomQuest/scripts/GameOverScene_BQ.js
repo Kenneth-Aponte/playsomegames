@@ -21,7 +21,7 @@ export default class GameOverScene_BQ extends Phaser.Scene {
         this.score;
         this.scoreText;
 
-        this.gameOverMusic;
+        // this.gameOverMusic;
         //reset the game scene (apparently this is the only way to do a proper restart)
         this.scene.remove('GameScene_BQ');
         this.scene.add('GameScene_BQ', GameScene_BQ);
@@ -72,13 +72,13 @@ export default class GameOverScene_BQ extends Phaser.Scene {
         this.scoreText = this.add.text(640,350,'SCORE: ' + this.score.toString(), { fontFamily: 'editundo', fontSize: '90px', color: '#d9d9d9'}).setOrigin(0.5,0.5).setResolution(10);
         this.scoreText.setShadow(45,45,'#8c8c8c');
         
-        this.gameOverMusic = this.sound.add('game_over');
-        this.gameOverMusic.play();
+        // this.gameOverMusic = this.sound.add('game_over');
+        // this.gameOverMusic.play();
     }
 
 
     startGame(){
-        this.gameOverMusic.stop();
+        // this.gameOverMusic.stop();
         this.scene.start('MenuScene_BQ');
     }
 }

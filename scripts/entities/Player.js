@@ -14,7 +14,7 @@ export default class Player extends Phaser.GameObjects.Sprite{
 
     update(time, delta, userInput){
 
-        const speed = 50;
+        const speed = 70;
         const prevAnim = this.anims.currentAnim.key;
 
 
